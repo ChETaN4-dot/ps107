@@ -1,0 +1,69 @@
+# =====================================================================
+# BIS Saathi Git Ignore Configuration
+# Bureau of Indian Standards Official AI Assistant (PS107)
+# =====================================================================
+
+# Environment & Secret Files (CRITICAL: Never commit real credentials)
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+!.env.example
+
+# Python Artifacts & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Node.js & Frontend Build Outputs
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/out/
+build/
+frontend/build/
+dist/
+.vercel
+*.tsbuildinfo
+frontend/next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Runtime Logs & Local Generated Vector Store Cache
+logs/
+*.log
+data/logs/
+data/chroma_db/
+.tempmediaStorage/
+
+# Operating System & Editor Files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local Development & Benchmark Reports (Preserved locally, excluded from repo)
+reports/
+docs/decision.md
+docs/flow.md
+frontend/README.md

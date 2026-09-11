@@ -1,0 +1,142 @@
+[
+  {
+    "title": "Consumer FAQs - Quality, ISI Mark & Grievances",
+    "filename": "consumer_faq.md",
+    "category": "consumer",
+    "source_url": "https://www.bis.gov.in/consumer-overview/for-consumers-faq/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Consumer Overview & Engagement",
+    "filename": "consumer_overview.md",
+    "category": "consumer",
+    "source_url": "https://www.bis.gov.in/consumer-overview/?lang=en",
+    "chunk_count": 4
+  },
+  {
+    "title": "Consumer Protection Guidelines",
+    "filename": "consumer_protection.md",
+    "category": "consumer",
+    "source_url": "https://www.bis.gov.in/consumer-overview/consumer-protection/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Online Complaint Registration Guidance",
+    "filename": "online_complaint_registration.md",
+    "category": "consumer",
+    "source_url": "https://www.bis.gov.in/consumer-overview/online-complaint-registration/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Consumer Protection and Verification in Hallmarking",
+    "filename": "consumer_protection_hallmarking.md",
+    "category": "hallmarking",
+    "source_url": "https://www.bis.gov.in/hallmarking-overview/consumer-protection/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Hallmarking FAQs - General & Fundamentals",
+    "filename": "hallmarking_faq_general.md",
+    "category": "hallmarking",
+    "source_url": "https://www.bis.gov.in/hallmarking-overview/hallmarking-faqs/hallmarking-faq/?lang=en",
+    "chunk_count": 23
+  },
+  {
+    "title": "Hallmarking Guidance for Jewellers",
+    "filename": "hallmarking_faq_jewellers.md",
+    "category": "hallmarking",
+    "source_url": "https://www.bis.gov.in/hallmarking-jewellers/?lang=en",
+    "chunk_count": 49
+  },
+  {
+    "title": "Hallmarking FAQs - Mandatory Hallmarking & Consumers",
+    "filename": "hallmarking_faq_mandatory_consumer.md",
+    "category": "hallmarking",
+    "source_url": "https://www.bis.gov.in/hallmarking-overview/hallmarking-faqs/mandatory/?lang=en",
+    "chunk_count": 7
+  },
+  {
+    "title": "Hallmarking Overview and Regulation",
+    "filename": "hallmarking_overview.md",
+    "category": "hallmarking",
+    "source_url": "https://www.bis.gov.in/hallmarking-overview/?lang=en",
+    "chunk_count": 4
+  },
+  {
+    "title": "Jewellers Registration Scheme for Hallmarking",
+    "filename": "jewellers_registration_scheme.md",
+    "category": "hallmarking",
+    "source_url": "https://www.bis.gov.in/hallmarking-overview/jewellers-registration-scheme/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "BIS Citizen's Charter (Lab Services, Timelines & Consumer Rights)",
+    "filename": "citizens_charter_lab_services_and_timelines.md",
+    "category": "labs",
+    "source_url": "https://www.bis.gov.in/wp-content/uploads/2024/01/Citizens-Charter-Version-January-2024.pdf",
+    "chunk_count": 16
+  },
+  {
+    "title": "Laboratory Recognition Scheme (LRS) FAQs",
+    "filename": "laboratory_faq.md",
+    "category": "labs",
+    "source_url": "https://www.bis.gov.in/laboratorys/laboratory-faq/?lang=en",
+    "chunk_count": 11
+  },
+  {
+    "title": "BIS Laboratory Services Overview",
+    "filename": "laboratory_overview.md",
+    "category": "labs",
+    "source_url": "https://www.bis.gov.in/laboratorys/laboratory-services-overview/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Products Under Compulsory Certification Overview",
+    "filename": "products_under_compulsory_certification.md",
+    "category": "product_certification",
+    "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Product Certification FAQs",
+    "filename": "product_certification_faq.md",
+    "category": "product_certification",
+    "source_url": "https://www.bis.gov.in/product-certification/product-certification-faq/?lang=en",
+    "chunk_count": 14
+  },
+  {
+    "title": "Product Certification Overview",
+    "filename": "product_certification_overview.md",
+    "category": "product_certification",
+    "source_url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en",
+    "chunk_count": 5
+  },
+  {
+    "title": "Product Certification Process (Option 1 & 2)",
+    "filename": "product_certification_process.md",
+    "category": "product_certification",
+    "source_url": "https://www.bis.gov.in/product-certification/product-certification-process/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Compulsory Registration Standards Metadata - Scheme II (CRS Electronics & IT)",
+    "filename": "compulsory_standards_scheme_ii_metadata.md",
+    "category": "standards_metadata",
+    "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Compulsory Certification Standards Metadata - Scheme I (Mark Scheme)",
+    "filename": "compulsory_standards_scheme_i_metadata.md",
+    "category": "standards_metadata",
+    "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en",
+    "chunk_count": 2
+  },
+  {
+    "title": "Standards Formulation & National Standards Overview",
+    "filename": "standards_overview.md",
+    "category": "standards_metadata",
+    "source_url": "https://www.bis.gov.in/standards-overview/?lang=en",
+    "chunk_count": 2
+  }
+]

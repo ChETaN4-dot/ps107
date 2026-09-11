@@ -1398,30 +1398,30 @@ export default function Home() {
       {/* ================= 1. SUBTLE TRICOLOR MICRO-ACCENT RIBBON ================= */}
       <div className="tricolor-ribbon h-1 w-full opacity-90"></div>
 
-      {/* ================= 2. SOVEREIGN TOP UTILITY BAR (Deep Ink Navy) ================= */}
-      <div className="bg-[#101828] text-[#FAF9F6] text-[11px] border-b border-[#242C3D]">
+      {/* ================= 2. SOVEREIGN TOP UTILITY BAR (Royal Midnight Navy) ================= */}
+      <div className="bg-gradient-to-r from-[#060D1A] via-[#0F172A] to-[#060D1A] text-slate-200 text-[11px] border-b border-slate-800/80 shadow-inner">
         <div className="max-w-7xl mx-auto px-4 py-1.5 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center space-x-3">
-            <span className="flex items-center space-x-1.5 font-medium tracking-wide">
-              <span className="relative flex h-2 w-2">
-                <span className="radar-ring absolute inline-flex h-full w-full rounded-full bg-[#138808] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#138808]"></span>
+            <span className="flex items-center space-x-2 font-medium tracking-wide">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="radar-ring absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#10B981]"></span>
               </span>
-              <span className="font-bold text-[#FAF9F6]">{t.govIndia}</span>
-              <span className="text-[#667085] hidden sm:inline">•</span>
-              <span className="text-[#E7E2D9] hidden md:inline">{t.ministry}</span>
+              <span className="font-extrabold text-white tracking-tight">{t.govIndia}</span>
+              <span className="text-slate-600 hidden sm:inline">•</span>
+              <span className="text-slate-300 hidden md:inline">{t.ministry}</span>
             </span>
           </div>
 
-          <div className="flex items-center space-x-3 text-[#FAF9F6]">
+          <div className="flex items-center space-x-3 text-slate-200">
             {/* Font Scaler */}
-            <div className="hidden sm:flex items-center space-x-1 bg-[#161B26] px-2 py-0.5 rounded border border-[#242C3D]">
-              <span className="text-[10px] text-[#98A2B3] mr-1">{t.fontScale}</span>
-              <button onClick={() => handleFontSizeChange(-5)} className="px-1 hover:text-white font-medium hover:bg-[#242C3D] rounded transition-colors">A-</button>
-              <span className="text-[#667085]">|</span>
-              <button onClick={() => { setFontSizeScale(100); document.documentElement.style.fontSize = "100%"; }} className="px-1 hover:text-white font-semibold hover:bg-[#242C3D] rounded transition-colors">A</button>
-              <span className="text-[#667085]">|</span>
-              <button onClick={() => handleFontSizeChange(5)} className="px-1 hover:text-white font-bold hover:bg-[#242C3D] rounded transition-colors">A+</button>
+            <div className="hidden sm:flex items-center space-x-1.5 bg-slate-900/80 px-2.5 py-0.5 rounded-lg border border-slate-700/60 shadow-sm">
+              <span className="text-[10px] text-slate-400 mr-1">{t.fontScale}</span>
+              <button onClick={() => handleFontSizeChange(-5)} className="px-1 hover:text-white font-medium hover:bg-slate-700/50 rounded transition-colors">A-</button>
+              <span className="text-slate-600">|</span>
+              <button onClick={() => { setFontSizeScale(100); document.documentElement.style.fontSize = "100%"; }} className="px-1 hover:text-white font-semibold hover:bg-slate-700/50 rounded transition-colors">A</button>
+              <span className="text-slate-600">|</span>
+              <button onClick={() => handleFontSizeChange(5)} className="px-1 hover:text-white font-bold hover:bg-slate-700/50 rounded transition-colors">A+</button>
             </div>
 
             {/* Screen Reader Voice Toggle */}
@@ -1431,24 +1431,24 @@ export default function Home() {
                 setVoiceAutoSpeak(n);
                 localStorage.setItem("bis_saathi_voice_auto_speak", String(n));
               }}
-              className={`hidden lg:flex items-center space-x-1.5 px-2 py-0.5 rounded border transition-colors ${
-                voiceAutoSpeak ? "bg-[#138808]/20 border-[#138808] text-[#138808] font-bold" : "border-transparent text-[#FAF9F6] hover:text-white"
+              className={`hidden lg:flex items-center space-x-1.5 px-2.5 py-0.5 rounded-lg border transition-all ${
+                voiceAutoSpeak ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400 font-bold" : "border-slate-700/50 text-slate-300 hover:text-white hover:bg-slate-800"
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">{voiceAutoSpeak ? "volume_up" : "record_voice_over"}</span>
               <span>{t.voiceReadout} {voiceAutoSpeak ? t.voiceOn : ""}</span>
             </button>
 
-            <span className="text-[#667085] hidden sm:inline">|</span>
+            <span className="text-slate-700 hidden sm:inline">|</span>
 
-            <a className="hover:text-[#FF7A00] transition-colors flex items-center space-x-1 text-[#FAF9F6] font-semibold" href="https://www.bis.gov.in" target="_blank" rel="noreferrer">
+            <a className="hover:text-orange-400 transition-colors flex items-center space-x-1 text-slate-200 font-bold" href="https://www.bis.gov.in" target="_blank" rel="noreferrer">
               <span>bis.gov.in</span>
               <span className="material-symbols-outlined text-[13px]">open_in_new</span>
             </a>
 
-            <span className="text-[#667085]">|</span>
+            <span className="text-slate-700">|</span>
 
-            <span className="text-[#FF7A00] font-bold flex items-center space-x-1">
+            <span className="text-orange-400 font-extrabold flex items-center space-x-1">
               <span className="material-symbols-outlined text-[14px]">call</span>
               <span>{t.helpline}</span>
             </span>
@@ -1457,29 +1457,29 @@ export default function Home() {
       </div>
 
       {/* ================= 3. INSTITUTIONAL HEADER & NAVIGATION ================= */}
-      <header className="bg-white dark:bg-[#161B26] border-b border-[#E7E2D9] dark:border-[#242C3D] shadow-2xs sticky top-0 z-40">
+      <header className="glass-header bg-white/95 dark:bg-[#0B101D]/90 backdrop-blur-2xl border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
           <div className="flex items-center space-x-3.5">
             {/* Sidebar toggle button */}
             <button
               onClick={() => setSidebarOpen(p => !p)}
-              className="p-1.5 rounded-lg border border-[#E7E2D9] dark:border-[#242C3D] text-[#101828] dark:text-[#FAF9F6] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430] transition-colors"
+              className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[#0F172A] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs"
               title={t.toggleSidebar}
             >
               <span className="material-symbols-outlined text-[20px]">{sidebarOpen ? "menu_open" : "menu"}</span>
             </button>
 
             {/* Emblem & Branding */}
-            <div className="flex items-center space-x-2.5">
-              <div className="w-10 h-10 rounded-lg bg-[#FAF9F6] dark:bg-[#1F2430] border border-[#E7E2D9] dark:border-[#242C3D] flex flex-col items-center justify-center p-0.5 shadow-2xs overflow-hidden flex-shrink-0">
-                <svg className="w-6 h-6 text-[#101828] dark:text-[#FAF9F6]" fill="currentColor" viewBox="0 0 100 100">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-slate-800 dark:to-slate-900 border border-orange-200/70 dark:border-orange-500/20 flex flex-col items-center justify-center p-0.5 shadow-sm overflow-hidden flex-shrink-0">
+                <svg className="w-6 h-6 text-[#FF6B00] dark:text-[#FFA800]" fill="currentColor" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" fill="none" r="45" stroke="currentColor" strokeWidth="4"></circle>
                   <circle cx="50" cy="50" fill="none" r="10" stroke="currentColor" strokeWidth="3"></circle>
                   <circle cx="50" cy="50" fill="currentColor" r="3"></circle>
                   <g stroke="currentColor" strokeWidth="2">
                     <line x1="50" x2="50" y1="5" y2="40"></line>
                     <line x1="50" x2="50" y1="60" y2="95"></line>
-                    <line x1="5" x2="40" y1="50" y2="50"></line>
+                    <line x1="50" x2="40" y1="50" y2="50"></line>
                     <line x1="60" x2="95" y1="50" y2="50"></line>
                     <line x1="18" x2="43" y1="18" y2="43"></line>
                     <line x1="57" x2="82" y1="57" y2="82"></line>
@@ -1487,32 +1487,32 @@ export default function Home() {
                     <line x1="43" x2="18" y1="57" y2="82"></line>
                   </g>
                 </svg>
-                <span className="text-[6.5px] font-bold text-[#101828] dark:text-[#FAF9F6] leading-none mt-0.5 font-serif">सत्यमेव जयते</span>
+                <span className="text-[6.5px] font-bold text-[#FF6B00] dark:text-[#FFA800] leading-none mt-0.5 font-serif">सत्यमेव जयते</span>
               </div>
 
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-lg font-extrabold text-[#101828] dark:text-[#FAF9F6]">{t.bisTitle}</span>
-                  <span className="text-[#667085] text-sm font-normal">|</span>
-                  <span className="text-lg font-bold text-[#101828] dark:text-[#FAF9F6]">{t.bisHindiTitle}</span>
+                  <span className="text-xl font-black bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent tracking-tight">{t.bisTitle}</span>
+                  <span className="text-slate-400 text-sm font-normal">|</span>
+                  <span className="text-lg font-extrabold text-[#FF6B00] dark:text-[#FFA800]">{t.bisHindiTitle}</span>
                 </div>
-                <div className="text-xs text-[#667085] dark:text-[#98A2B3] flex items-center space-x-1.5">
-                  <span className="font-semibold text-[#101828] dark:text-[#FAF9F6]">Bureau of Indian Standards</span>
+                <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Bureau of Indian Standards</span>
                   <span>•</span>
-                  <span className="italic font-serif text-[#FF7A00] font-semibold">{t.bisMotto}</span>
+                  <span className="italic font-serif text-orange-600 dark:text-orange-400 font-bold">{t.bisMotto}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Mode Switcher Tabs */}
-          <nav className="hidden md:flex items-center space-x-1 bg-[#FAF9F6] dark:bg-[#1E2330] p-1 rounded-xl border border-[#E7E2D9] dark:border-[#242C3D]">
+          <nav className="hidden md:flex items-center space-x-1.5 bg-[#FAF9F6] dark:bg-[#1E2330] p-1.5 rounded-2xl border border-[#E7E2D9] dark:border-[#242C3D] shadow-inner">
             <button
               onClick={() => setMode("ask_bis")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
                 mode === "ask_bis"
-                  ? "bg-white dark:bg-[#161B26] text-[#101828] dark:text-[#FAF9F6] shadow-2xs border border-[#E7E2D9] dark:border-[#242C3D]"
-                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white"
+                  ? "bg-gradient-to-r from-[#FF6B00] to-[#FFA800] text-white shadow-md shadow-orange-500/25 scale-[1.02]"
+                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">smart_toy</span>
@@ -1521,10 +1521,10 @@ export default function Home() {
 
             <button
               onClick={() => setMode("find_my_standard")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
                 mode === "find_my_standard"
-                  ? "bg-white dark:bg-[#161B26] text-[#101828] dark:text-[#FAF9F6] shadow-2xs border border-[#E7E2D9] dark:border-[#242C3D]"
-                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white"
+                  ? "bg-gradient-to-r from-[#2563EB] to-[#4F46E5] text-white shadow-md shadow-blue-500/25 scale-[1.02]"
+                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">rule</span>
@@ -1533,10 +1533,10 @@ export default function Home() {
 
             <button
               onClick={() => setMode("laboratories")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
                 mode === "laboratories"
-                  ? "bg-white dark:bg-[#161B26] text-[#101828] dark:text-[#FAF9F6] shadow-2xs border border-[#E7E2D9] dark:border-[#242C3D]"
-                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white"
+                  ? "bg-gradient-to-r from-[#10B981] to-[#0D9488] text-white shadow-md shadow-emerald-500/25 scale-[1.02]"
+                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">biotech</span>
@@ -1545,10 +1545,10 @@ export default function Home() {
 
             <button
               onClick={() => setMode("verify_marks")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
                 mode === "verify_marks"
-                  ? "bg-white dark:bg-[#161B26] text-[#101828] dark:text-[#FAF9F6] shadow-2xs border border-[#E7E2D9] dark:border-[#242C3D]"
-                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white"
+                  ? "bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white shadow-md shadow-purple-500/25 scale-[1.02]"
+                  : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">verified</span>
@@ -1672,20 +1672,20 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ================= 4. STATUTORY GAZETTE TICKER (Deep Ink Navy) ================= */}
-      <div className="bg-[#101828] text-[#FAF9F6] border-b border-[#242C3D] py-1.5 px-4 overflow-hidden relative shadow-inner">
+      {/* ================= 4. STATUTORY GAZETTE TICKER (Midnight Indigo Ticker) ================= */}
+      <div className="bg-gradient-to-r from-[#070D1C] via-[#101B38] to-[#070D1C] text-slate-100 border-b border-indigo-950/80 py-1.5 px-4 overflow-hidden relative shadow-inner">
         <div className="max-w-7xl mx-auto flex items-center">
-          <div className="flex items-center space-x-1.5 bg-[#FF7A00] text-[#101828] text-[10px] font-black uppercase px-2.5 py-0.5 rounded mr-3 flex-shrink-0 z-10 shadow-2xs">
+          <div className="flex items-center space-x-1.5 bg-gradient-to-r from-[#FF6B00] to-[#FFA800] text-white text-[10px] font-black uppercase px-3 py-0.5 rounded-full mr-3 flex-shrink-0 z-10 shadow-md shadow-orange-500/30">
             <span className="material-symbols-outlined text-[13px] animate-bounce">bolt</span>
             <span>{t.tickerLabel}</span>
           </div>
 
           <div className="overflow-hidden flex-1 relative whitespace-nowrap">
-            <div className="marquee-track text-xs font-medium text-[#FAF9F6] flex items-center space-x-8">
+            <div className="marquee-track text-xs font-semibold text-slate-200 flex items-center space-x-8">
               {t.tickerItems.map((item, idx) => (
                 <React.Fragment key={idx}>
                   <span className="inline-flex items-center space-x-2">
-                    <span className={`w-1.5 h-1.5 rounded-full ${idx % 2 === 0 ? "bg-[#138808]" : "bg-[#FF7A00]"}`}></span>
+                    <span className={`w-2 h-2 rounded-full ${idx % 2 === 0 ? "bg-[#10B981] shadow-xs shadow-emerald-400" : "bg-[#FFA800] shadow-xs shadow-amber-400"}`}></span>
                     <span>{item}</span>
                   </span>
                   <span className="text-[#FF7A00] font-bold">•</span>
@@ -1699,95 +1699,95 @@ export default function Home() {
       {/* ================= 5. MAIN WORKSPACE WITH COLLAPSIBLE SIDEBAR ================= */}
       <div className="flex-1 max-w-7xl mx-auto w-full flex overflow-hidden">
 
-        {/* ── LEFT SIDEBAR: NEW CHAT & CONSULTATION HISTORY ─────────── */}
+        {/* ── LEFT SIDEBAR: NEW CHAT & CONSULTATION HISTORY (Midnight Royal Slate) ─────────── */}
         {sidebarOpen && (
-          <aside className="w-64 sm:w-72 bg-white dark:bg-[#161B26] border-r border-[#E7E2D9] dark:border-[#242C3D] flex flex-col flex-shrink-0 p-3 space-y-3 shadow-2xs">
-            {/* New Chat Button (Deep Ink Navy) */}
+          <aside className="w-64 sm:w-72 bg-gradient-to-b from-[#0A101D] via-[#0F172A] to-[#070B14] text-slate-100 border-r border-slate-800/80 flex flex-col flex-shrink-0 p-3.5 space-y-3.5 shadow-2xl">
+            {/* New Chat Button (Vibrant Saffron Shimmer) */}
             <button
               onClick={startNewChat}
-              className="w-full bg-[#101828] hover:bg-[#1D2939] text-[#FAF9F6] py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-sm transition-all"
+              className="w-full bg-gradient-to-r from-[#FF6B00] via-[#FFA800] to-[#FF6B00] hover:from-[#EA580C] hover:to-[#F59E0B] text-white py-3 px-4 rounded-2xl text-xs font-extrabold flex items-center justify-center space-x-2 shadow-md shadow-orange-500/30 btn-shimmer transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>+ {t.newConsultation}</span>
             </button>
 
             {/* Quick Mode Navigation in Sidebar */}
-            <div className="space-y-1 pt-1 border-t border-[#E7E2D9] dark:border-[#242C3D]">
-              <div className="text-[10px] font-bold text-[#667085] uppercase tracking-wider px-2 py-1">
-                {t.consultationsTitle}
+            <div className="space-y-1 pt-2 border-t border-slate-800/80">
+              <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-2 py-1">
+                Navigation
               </div>
               <button
                 onClick={() => setMode("ask_bis")}
-                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 ${
+                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
                   mode === "ask_bis"
-                    ? "bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-bold border-l-2 border-[#101828] dark:border-[#FF7A00]"
-                    : "text-[#667085] dark:text-[#98A2B3] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430]"
+                    ? "bg-orange-500/15 text-orange-400 border-l-4 border-orange-500 shadow-sm"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 }`}
               >
-                <span className="material-symbols-outlined text-[16px]">smart_toy</span>
+                <span className="material-symbols-outlined text-[17px]">smart_toy</span>
                 <span>{t.tabAskBis}</span>
               </button>
 
               <button
                 onClick={() => setMode("find_my_standard")}
-                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 ${
+                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
                   mode === "find_my_standard"
-                    ? "bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-bold border-l-2 border-[#101828] dark:border-[#FF7A00]"
-                    : "text-[#667085] dark:text-[#98A2B3] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430]"
+                    ? "bg-blue-500/15 text-blue-400 border-l-4 border-blue-500 shadow-sm"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 }`}
               >
-                <span className="material-symbols-outlined text-[16px]">rule</span>
+                <span className="material-symbols-outlined text-[17px]">rule</span>
                 <span>{t.tabFindStandard}</span>
               </button>
 
               <button
                 onClick={() => setMode("laboratories")}
-                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 ${
+                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
                   mode === "laboratories"
-                    ? "bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-bold border-l-2 border-[#101828] dark:border-[#FF7A00]"
-                    : "text-[#667085] dark:text-[#98A2B3] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430]"
+                    ? "bg-emerald-500/15 text-emerald-400 border-l-4 border-emerald-500 shadow-sm"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 }`}
               >
-                <span className="material-symbols-outlined text-[16px]">biotech</span>
+                <span className="material-symbols-outlined text-[17px]">biotech</span>
                 <span>{t.tabLabs}</span>
               </button>
 
               <button
                 onClick={() => setMode("verify_marks")}
-                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 ${
+                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
                   mode === "verify_marks"
-                    ? "bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-bold border-l-2 border-[#101828] dark:border-[#FF7A00]"
-                    : "text-[#667085] dark:text-[#98A2B3] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430]"
+                    ? "bg-purple-500/15 text-purple-400 border-l-4 border-purple-500 shadow-sm"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 }`}
               >
-                <span className="material-symbols-outlined text-[16px]">verified</span>
+                <span className="material-symbols-outlined text-[17px]">verified</span>
                 <span>{t.tabVerifyMarks}</span>
               </button>
             </div>
 
             {/* Session Search Bar */}
-            <div className="pt-2 border-t border-[#E7E2D9] dark:border-[#242C3D]">
+            <div className="pt-2 border-t border-slate-800/80">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[#667085]" />
+                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
                 <input
                   type="text"
                   value={sessionSearchQuery}
                   onChange={e => setSessionSearchQuery(e.target.value)}
                   placeholder={t.searchHistoryPlaceholder}
-                  className="w-full bg-[#FAF9F6] dark:bg-[#1F2430] border border-[#E7E2D9] dark:border-[#242C3D] rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-[#101828] dark:text-[#FAF9F6] placeholder-[#667085] focus:ring-1 focus:ring-[#101828]"
+                  className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-8 pr-2.5 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all font-medium"
                 />
               </div>
             </div>
 
             {/* Saved Chat Sessions */}
-            <div className="flex-1 overflow-y-auto space-y-1 custom-scroll">
-              <div className="text-[10px] font-bold text-[#667085] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+            <div className="flex-1 overflow-y-auto space-y-1.5 custom-scroll pr-1">
+              <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                 <span>{t.consultationsTitle}</span>
-                <span className="font-mono text-[9px] bg-[#FAF9F6] dark:bg-[#1F2430] px-1.5 py-0.5 rounded">{filteredSessions.length}</span>
+                <span className="font-mono text-[9px] bg-slate-800/80 text-orange-400 px-2 py-0.5 rounded-full font-bold">{filteredSessions.length}</span>
               </div>
 
               {filteredSessions.length === 0 ? (
-                <div className="p-3 text-center text-xs text-[#667085] italic">
+                <div className="p-3 text-center text-xs text-slate-500 italic">
                   {t.noPastChats}
                 </div>
               ) : (
@@ -1795,19 +1795,19 @@ export default function Home() {
                   <div
                     key={s.id}
                     onClick={() => switchSession(s)}
-                    className={`group px-2.5 py-2 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                    className={`group px-3 py-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all ${
                       s.id === currentSessionId
-                        ? "bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-bold border-l-2 border-[#101828] dark:border-[#FF7A00]"
-                        : "text-[#667085] dark:text-[#98A2B3] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430]"
+                        ? "bg-gradient-to-r from-orange-500/20 via-orange-500/10 to-transparent text-white font-bold border-l-3 border-orange-500 shadow-sm"
+                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                     }`}
                   >
                     <div className="flex items-center space-x-2 truncate">
-                      <MessageSquare className="w-3.5 h-3.5 flex-shrink-0 text-[#667085]" />
+                      <MessageSquare className="w-3.5 h-3.5 flex-shrink-0 text-orange-400" />
                       <span className="truncate">{s.title || t.newConsultation}</span>
                     </div>
                     <button
                       onClick={(e) => deleteSession(s.id, e)}
-                      className="opacity-0 group-hover:opacity-100 text-[#667085] hover:text-[#D92D20] p-0.5 transition-opacity"
+                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-400 p-0.5 transition-opacity"
                       title="Delete session"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -1818,33 +1818,33 @@ export default function Home() {
             </div>
 
             {/* Sidebar Bottom: Clear History & Grounding */}
-            <div className="pt-2 border-t border-[#E7E2D9] dark:border-[#242C3D] space-y-2">
+            <div className="pt-2 border-t border-slate-800/80 space-y-2">
               {sessions.length > 1 && (
                 <button
                   onClick={clearAllSessions}
-                  className="w-full text-center text-[10px] text-[#667085] hover:text-[#D92D20] py-1 transition-colors flex items-center justify-center space-x-1"
+                  className="w-full text-center text-[10px] text-slate-400 hover:text-rose-400 py-1 transition-colors flex items-center justify-center space-x-1"
                 >
                   <Trash2 className="w-3 h-3" />
                   <span>{t.clearHistory}</span>
                 </button>
               )}
-              <div className="text-[11px] text-[#667085] bg-[#FAF9F6] dark:bg-[#1F2430] p-2.5 rounded-xl space-y-1 border border-[#E7E2D9] dark:border-[#242C3D]">
-                <div className="font-bold text-[#101828] dark:text-[#FAF9F6] flex items-center space-x-1">
-                  <span className="material-symbols-outlined text-[14px] text-[#138808]">verified_user</span>
+              <div className="text-[11px] text-slate-300 bg-slate-900/80 p-3 rounded-2xl space-y-1 border border-slate-800 shadow-sm">
+                <div className="font-extrabold text-white flex items-center space-x-1.5">
+                  <span className="material-symbols-outlined text-[15px] text-[#10B981]">verified_user</span>
                   <span>{t.badgeSource}</span>
                 </div>
-                <p className="text-[10px] text-[#667085] leading-tight">Grounded against 741 verified Indian Standards &amp; Gazette notifications.</p>
+                <p className="text-[10px] text-slate-400 leading-tight">Grounded against 741 verified Indian Standards &amp; Gazette notifications.</p>
               </div>
             </div>
           </aside>
         )}
 
         {/* ── MAIN CONTENT AREA ─────────────────────────────────────── */}
-        <div className="flex-1 flex flex-col h-[calc(100vh-140px)] overflow-hidden bg-[#FAF9F6] dark:bg-[#0C111D]">
+        <div className="flex-1 flex flex-col min-h-0 h-[calc(100vh-140px)] overflow-hidden bg-gradient-to-br from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0]/40 dark:from-[#060A14] dark:via-[#0A0F1D] dark:to-[#060A14]">
 
           {/* ================= MODE 1: ASK BIS CHATBOT ================= */}
           {mode === "ask_bis" && (
-            <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
               {/* Chat Feed */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scroll">
                 {/* Dynamic Chat History Translation Banner */}
@@ -1891,38 +1891,38 @@ export default function Home() {
                 ) : (
                   /* Message Bubbles */
                   messages.map(msg => (
-                    <div key={msg.id} className="max-w-3xl mx-auto space-y-3">
+                    <div key={msg.id} className="max-w-3xl mx-auto space-y-3 animate-fade-in-up">
                       {msg.role === "user" ? (
-                        /* User message (Deep Ink Navy) */
+                        /* User message (Deep Slate Indigo Gradient) */
                         <div className="flex justify-end">
-                          <div className="bg-[#101828] text-[#FAF9F6] rounded-2xl rounded-tr-xs px-4 py-3 max-w-xl shadow-2xs text-sm space-y-1">
-                            <div className="text-[10px] text-[#98A2B3] font-mono flex items-center justify-between gap-4">
-                              <span>You ({currentPersona.label})</span>
+                          <div className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white rounded-2xl rounded-tr-xs px-5 py-3.5 max-w-xl shadow-md border border-slate-700/60 text-sm space-y-1.5">
+                            <div className="text-[10px] text-slate-300 font-mono flex items-center justify-between gap-4">
+                              <span className="font-semibold text-orange-400">You ({currentPersona.label})</span>
                               <span>{msg.timestamp}</span>
                             </div>
-                            <p className="font-medium whitespace-pre-wrap">{msg.content}</p>
+                            <p className="font-medium whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                           </div>
                         </div>
                       ) : (
-                        /* Assistant message (Pure White card) */
-                        <article className="bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-2xl rounded-tl-xs p-5 shadow-2xs space-y-4 text-[#101828] dark:text-[#FAF9F6]">
+                        /* Assistant message (Glassmorphic Card with Saffron/Emerald micro-accent) */
+                        <article className="glass-card bg-white/95 dark:bg-[#111827]/90 border border-slate-200/80 dark:border-slate-800 rounded-2xl rounded-tl-xs p-5 sm:p-6 shadow-md space-y-4 text-[#0F172A] dark:text-[#F8FAFC] border-l-4 border-l-[#FF6B00]">
                           {/* Header */}
-                          <div className="flex items-center justify-between pb-3 border-b border-[#E7E2D9] dark:border-[#242C3D]">
+                          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                             <div className="flex items-center space-x-2">
-                              <span className="material-symbols-outlined text-[#138808] text-[20px]">verified</span>
-                              <span className="font-bold text-[#101828] dark:text-[#FAF9F6] text-sm">{t.statutoryNotice}</span>
+                              <span className="material-symbols-outlined text-[#10B981] text-[20px]">verified</span>
+                              <span className="font-extrabold text-[#0F172A] dark:text-[#F8FAFC] text-sm tracking-tight">{t.statutoryNotice}</span>
                             </div>
 
                             {msg.confidence_level && (
-                              <span className={`inline-flex items-center space-x-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                              <span className={`inline-flex items-center space-x-1.5 text-[11px] font-bold px-3 py-0.5 rounded-full ${
                                 msg.confidence_level === "HIGH"
-                                  ? "text-[#138808] bg-[#138808]/10 border border-[#138808]/30"
+                                  ? "text-[#059669] dark:text-[#34D399] bg-[#10B981]/15 border border-[#10B981]/40 pulse-glow-green"
                                   : msg.confidence_level === "MEDIUM"
-                                  ? "text-[#FF7A00] bg-[#FF7A00]/10 border border-[#FF7A00]/30"
-                                  : "text-[#667085] bg-[#FAF9F6] border border-[#E7E2D9]"
+                                  ? "text-[#D97706] dark:text-[#FBBF24] bg-[#F59E0B]/15 border border-[#F59E0B]/40 pulse-glow-amber"
+                                  : "text-[#64748B] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                               }`}>
-                                <span className={`w-1.5 h-1.5 rounded-full ${
-                                  msg.confidence_level === "HIGH" ? "bg-[#138808]" : msg.confidence_level === "MEDIUM" ? "bg-[#FF7A00]" : "bg-[#667085]"
+                                <span className={`w-2 h-2 rounded-full ${
+                                  msg.confidence_level === "HIGH" ? "bg-[#10B981]" : msg.confidence_level === "MEDIUM" ? "bg-[#F59E0B]" : "bg-[#64748B]"
                                 }`}></span>
                                 <span>
                                   {msg.confidence_level === "HIGH" ? t.confHigh : msg.confidence_level === "MEDIUM" ? t.confMed : t.confLow}
@@ -1933,7 +1933,7 @@ export default function Home() {
 
                           {/* Multilingual Notice */}
                           {msg.multilingual_notice && (
-                            <div className="text-xs text-[#101828] dark:text-[#FAF9F6] bg-[#FAF9F6] dark:bg-[#1F2430] p-2.5 rounded-lg border border-[#E7E2D9] dark:border-[#242C3D] flex items-center space-x-2">
+                            <div className="text-xs text-[#0F172A] dark:text-[#F8FAFC] bg-blue-50/70 dark:bg-blue-950/30 p-2.5 rounded-xl border border-blue-200/60 dark:border-blue-800/60 flex items-center space-x-2">
                               <span className="material-symbols-outlined text-[16px] text-[#2563EB]">translate</span>
                               <span>{msg.multilingual_notice}</span>
                             </div>
@@ -2154,22 +2154,22 @@ export default function Home() {
               </div>
 
               {/* Bottom Chat Input Dock */}
-              <div className="p-3 sm:p-4 bg-white dark:bg-[#161B26] border-t border-[#E7E2D9] dark:border-[#242C3D]">
-                <div className="max-w-3xl mx-auto space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-[#667085] px-1">
-                    <label className="flex items-center space-x-1.5 cursor-pointer">
+              <div className="p-3 sm:p-4 glass-header bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800 shadow-lg">
+                <div className="max-w-3xl mx-auto space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
+                    <label className="flex items-center space-x-2 cursor-pointer font-medium hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
                       <input
                         type="checkbox"
                         checked={includeChecklist}
                         onChange={e => setIncludeChecklist(e.target.checked)}
-                        className="rounded text-[#101828] focus:ring-[#101828] w-3.5 h-3.5"
+                        className="rounded text-orange-500 focus:ring-orange-500 w-3.5 h-3.5"
                       />
                       <span>{t.includeChecklist}</span>
                     </label>
-                    <span className="hidden sm:inline font-mono text-[10px]">Press Enter to send</span>
+                    <span className="hidden sm:inline font-mono text-[10px] text-slate-400">Press Enter ↵ to send</span>
                   </div>
 
-                  <div className="relative bg-[#FAF9F6] dark:bg-[#1F2430] rounded-xl border border-[#E7E2D9] dark:border-[#242C3D] focus-within:border-[#101828] dark:focus-within:border-[#FF7A00] p-2 flex items-center gap-2 shadow-2xs">
+                  <div className="relative bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:border-orange-500 focus-within:ring-3 focus-within:ring-orange-500/20 p-2 sm:p-2.5 flex items-center gap-2 shadow-md transition-all">
                     <input
                       ref={searchInputRef}
                       type="text"
@@ -2177,33 +2177,41 @@ export default function Home() {
                       onChange={e => setInput(e.target.value)}
                       onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
                       placeholder={t.inputPlaceholder}
-                      className="w-full border-0 p-1 text-[#101828] dark:text-[#FAF9F6] placeholder-[#667085] focus:ring-0 text-sm bg-transparent font-medium"
+                      className="w-full border-0 p-1 text-[#0F172A] dark:text-[#F8FAFC] placeholder-slate-400 focus:ring-0 text-sm bg-transparent font-medium"
                     />
 
                     <div className="flex items-center space-x-1.5 flex-shrink-0">
                       <button
                         onClick={startRecording}
-                        className={`p-2 rounded-lg transition-all flex items-center justify-center ${
+                        className={`p-2.5 rounded-xl transition-all flex items-center justify-center relative ${
                           micState === "LISTENING"
-                            ? "bg-[#D92D20]/10 text-[#D92D20] animate-pulse"
-                            : "hover:bg-[#E7E2D9] dark:hover:bg-[#242C3D] text-[#667085] dark:text-[#98A2B3]"
+                            ? "bg-red-500 text-white animate-pulse shadow-md shadow-red-500/30"
+                            : "hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"
                         }`}
                         title="Voice Microphone (Speech-to-Text)"
                       >
-                        <Mic className="w-4 h-4" />
+                        {micState === "LISTENING" && (
+                          <span className="radar-ring absolute inset-0 rounded-xl bg-red-500 opacity-60"></span>
+                        )}
+                        <Mic className="w-4 h-4 relative z-10" />
                       </button>
 
                       <button
                         onClick={() => handleSend()}
                         disabled={isLoading || !input.trim()}
-                        className="bg-[#101828] hover:bg-[#1D2939] text-[#FAF9F6] p-2 rounded-lg font-bold text-xs flex items-center justify-center transition-all disabled:opacity-40 shadow-2xs"
+                        className="bg-gradient-to-r from-[#FF6B00] to-[#FFA800] hover:from-[#EA580C] hover:to-[#F59E0B] text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center space-x-1.5 transition-all disabled:opacity-40 shadow-md shadow-orange-500/25 btn-shimmer"
                       >
-                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                          <>
+                            <span>Send</span>
+                            <Send className="w-3.5 h-3.5" />
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
 
-                  <div className="text-center text-[10px] text-[#667085]">
+                  <div className="text-center text-[10px] text-slate-400">
                     {t.footerDisclaimer}
                   </div>
                 </div>
@@ -2226,20 +2234,23 @@ export default function Home() {
                 </div>
 
                 {/* Standard Search Bar */}
-                <div className="bg-white dark:bg-[#161B26] p-4 rounded-2xl border border-[#E7E2D9] dark:border-[#242C3D] shadow-2xs space-y-3">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={productDesc}
-                      onChange={e => setProductDesc(e.target.value)}
-                      onKeyDown={e => { if (e.key === "Enter") handleRecommendStandards(); }}
-                      placeholder={t.findStandardSearchPlaceholder}
-                      className="w-full text-sm p-2.5 rounded-xl border border-[#E7E2D9] dark:border-[#242C3D] bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-medium"
-                    />
+                <div className="glass-card bg-white/95 dark:bg-[#111827]/90 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-lg space-y-3.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative flex-1">
+                      <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
+                      <input
+                        type="text"
+                        value={productDesc}
+                        onChange={e => setProductDesc(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter") handleRecommendStandards(); }}
+                        placeholder={t.findStandardSearchPlaceholder}
+                        className="w-full text-sm pl-10 pr-3.5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/70 text-[#0F172A] dark:text-[#F8FAFC] font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                      />
+                    </div>
                     <button
                       onClick={() => handleRecommendStandards()}
                       disabled={isRecommending || !productDesc.trim()}
-                      className="bg-[#101828] hover:bg-[#1D2939] text-[#FAF9F6] px-5 py-2.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center space-x-1.5 flex-shrink-0"
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-2xl text-xs font-bold transition-all disabled:opacity-50 flex items-center space-x-2 flex-shrink-0 shadow-md shadow-blue-500/25 btn-shimmer"
                     >
                       {isRecommending ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>{t.findStandardSearchBtn}</span>}
                     </button>
@@ -2251,7 +2262,7 @@ export default function Home() {
                       <button
                         key={chip}
                         onClick={() => { setProductDesc(chip); handleRecommendStandards(chip); }}
-                        className="text-xs bg-[#FAF9F6] dark:bg-[#1F2430] hover:bg-[#E7E2D9] text-[#101828] dark:text-[#FAF9F6] px-3 py-1 rounded-full border border-[#E7E2D9] dark:border-[#242C3D] transition-colors"
+                        className="text-xs bg-slate-100/80 dark:bg-slate-800/80 hover:bg-blue-50 hover:border-blue-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-blue-600 px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 transition-all font-medium"
                       >
                         {chip}
                       </button>
@@ -2265,63 +2276,63 @@ export default function Home() {
                     {recommendations.map((rec, rIdx) => (
                       <div
                         key={rIdx}
-                        className="civic-card-hover bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-2xl p-5 shadow-2xs space-y-3 flex flex-col justify-between"
+                        className="glass-card civic-card-hover bg-white/95 dark:bg-[#111827]/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-md space-y-3.5 flex flex-col justify-between border-l-4 border-l-blue-600"
                       >
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap items-center gap-1.5 justify-between">
+                        <div className="space-y-2.5">
+                          <div className="flex flex-wrap items-center gap-2 justify-between">
                             <div className="flex flex-wrap items-center gap-1.5">
                               {rec.lifecycle_status === "CURRENT_WITH_AMENDMENTS" ? (
-                                <span className="inline-flex items-center space-x-1 bg-[#138808]/10 text-[#138808] border border-[#138808]/30 px-2.5 py-0.5 rounded text-[11px] font-bold">
-                                  <span className="material-symbols-outlined text-[13px]">verified</span>
+                                <span className="inline-flex items-center space-x-1.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-3 py-1 rounded-full text-[11px] font-extrabold pulse-glow-green">
+                                  <span className="material-symbols-outlined text-[14px]">verified</span>
                                   <span>✓ Current — Amds Included</span>
                                 </span>
                               ) : rec.lifecycle_status === "CURRENT" || rec.is_current_verified ? (
-                                <span className="inline-flex items-center space-x-1 bg-[#138808]/10 text-[#138808] border border-[#138808]/30 px-2.5 py-0.5 rounded text-[11px] font-bold">
-                                  <span className="material-symbols-outlined text-[13px]">verified</span>
+                                <span className="inline-flex items-center space-x-1.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-3 py-1 rounded-full text-[11px] font-extrabold pulse-glow-green">
+                                  <span className="material-symbols-outlined text-[14px]">verified</span>
                                   <span>✓ Current BIS Standard</span>
                                 </span>
                               ) : rec.lifecycle_status === "SUPERSEDED" ? (
-                                <span className="inline-flex items-center space-x-1 bg-[#D92D20]/10 text-[#D92D20] border border-[#D92D20]/30 px-2.5 py-0.5 rounded text-[11px] font-bold">
-                                  <span className="material-symbols-outlined text-[13px]">block</span>
+                                <span className="inline-flex items-center space-x-1.5 bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 px-3 py-1 rounded-full text-[11px] font-extrabold">
+                                  <span className="material-symbols-outlined text-[14px]">block</span>
                                   <span>Superseded Standard</span>
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center space-x-1 bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30 px-2.5 py-0.5 rounded text-[11px] font-bold">
-                                  <span className="material-symbols-outlined text-[13px]">help</span>
+                                <span className="inline-flex items-center space-x-1.5 bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 px-3 py-1 rounded-full text-[11px] font-extrabold">
+                                  <span className="material-symbols-outlined text-[14px]">help</span>
                                   <span>Unverified Lifecycle</span>
                                 </span>
                               )}
 
                               {rec.qco_mandatory && (
-                                <span className="inline-flex items-center space-x-1 bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/30 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+                                <span className="inline-flex items-center space-x-1 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide">
                                   <span>{t.qcoMandatory}</span>
                                 </span>
                               )}
                             </div>
 
-                            <span className="text-[11px] font-bold text-[#FF7A00] font-mono bg-[#FAF9F6] dark:bg-[#1F2430] px-2 py-0.5 rounded border border-[#E7E2D9] dark:border-[#242C3D]">
+                            <span className="text-[11px] font-extrabold text-orange-600 dark:text-orange-400 font-mono bg-orange-50 dark:bg-orange-950/40 px-2.5 py-1 rounded-lg border border-orange-200 dark:border-orange-900/60">
                               {t.colMatchScore}: {Math.round(rec.confidence * 100)}%
                             </span>
                           </div>
 
-                          <h3 className="font-mono text-lg font-extrabold text-[#101828] dark:text-[#FAF9F6]">{rec.standard_number}</h3>
-                          <p className="text-xs font-bold text-[#101828] dark:text-[#FAF9F6]">{rec.title}</p>
-                          <p className="text-[#667085] dark:text-[#98A2B3] text-xs leading-relaxed">{rec.match_reason}</p>
+                          <h3 className="font-mono text-lg font-extrabold text-[#0F172A] dark:text-[#F8FAFC] tracking-tight">{rec.standard_number}</h3>
+                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-snug">{rec.title}</p>
+                          <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">{rec.match_reason}</p>
 
                           {rec.verification_source && (
-                            <div className="flex items-center space-x-1 text-[10px] text-[#667085] dark:text-[#98A2B3] pt-1">
-                              <span className="material-symbols-outlined text-[12px] text-[#138808]">verified_user</span>
+                            <div className="flex items-center space-x-1.5 text-[10px] text-slate-500 dark:text-slate-400 pt-1">
+                              <span className="material-symbols-outlined text-[13px] text-emerald-600">verified_user</span>
                               <span>Source: {rec.verification_source}</span>
                             </div>
                           )}
                         </div>
 
-                        <div className="flex items-center space-x-2 pt-2 border-t border-[#E7E2D9] dark:border-[#242C3D]">
+                        <div className="flex items-center space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                           <a
                             href={rec.source_url}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex-1 text-center bg-[#101828] hover:bg-[#1D2939] text-[#FAF9F6] text-xs py-2 rounded-xl font-bold transition-colors"
+                            className="flex-1 text-center bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-800 hover:to-indigo-900 text-white text-xs py-2.5 rounded-xl font-extrabold transition-all shadow-sm"
                           >
                             View on Portal
                           </a>
@@ -2331,9 +2342,9 @@ export default function Home() {
                               setMode("ask_bis");
                               handleSend(q);
                             }}
-                            className="bg-[#FAF9F6] dark:bg-[#1F2430] hover:bg-[#E7E2D9] text-[#101828] dark:text-[#FAF9F6] text-xs px-4 py-2 rounded-xl font-bold border border-[#E7E2D9] dark:border-[#242C3D] transition-colors flex items-center space-x-1"
+                            className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-800 dark:text-slate-200 text-xs px-4 py-2.5 rounded-xl font-bold border border-slate-200 dark:border-slate-700 transition-colors flex items-center space-x-1.5"
                           >
-                            <MessageSquare className="w-3.5 h-3.5" />
+                            <MessageSquare className="w-3.5 h-3.5 text-orange-500" />
                             <span>{t.btnAskBisAbout}</span>
                           </button>
                         </div>
@@ -2341,7 +2352,7 @@ export default function Home() {
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-2xl p-6 text-center space-y-3">
+                  <div className="glass-card bg-white/95 dark:bg-[#111827]/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 text-center space-y-3 shadow-sm">
                     <p className="text-sm text-[#667085] dark:text-[#98A2B3]">
                       {t.noStandardsFound}
                     </p>
@@ -2366,33 +2377,33 @@ export default function Home() {
                 </div>
 
                 {/* Lab Search Filters */}
-                <form onSubmit={handleSearchLabs} className="bg-white dark:bg-[#161B26] p-4 rounded-2xl border border-[#E7E2D9] dark:border-[#242C3D] shadow-2xs space-y-3 text-xs">
+                <form onSubmit={handleSearchLabs} className="glass-card bg-white/95 dark:bg-[#111827]/90 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-lg space-y-4 text-xs">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="font-bold text-[#101828] dark:text-[#FAF9F6] block mb-1">Product or Material</label>
+                      <label className="font-extrabold text-[#0F172A] dark:text-[#F8FAFC] block mb-1.5">Product or Material</label>
                       <input
                         type="text"
                         value={labSearchProduct}
                         onChange={e => setLabSearchProduct(e.target.value)}
                         placeholder={t.labSearchProductPlaceholder}
-                        className="w-full p-2 rounded-xl border border-[#E7E2D9] dark:border-[#242C3D] bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-medium"
+                        className="w-full p-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/70 text-[#0F172A] dark:text-[#F8FAFC] font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-[#101828] dark:text-[#FAF9F6] block mb-1">City / State</label>
+                      <label className="font-extrabold text-[#0F172A] dark:text-[#F8FAFC] block mb-1.5">City / State</label>
                       <input
                         type="text"
                         value={labSearchLocation}
                         onChange={e => setLabSearchLocation(e.target.value)}
                         placeholder={t.labSearchLocationPlaceholder}
-                        className="w-full p-2 rounded-xl border border-[#E7E2D9] dark:border-[#242C3D] bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] font-medium"
+                        className="w-full p-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/70 text-[#0F172A] dark:text-[#F8FAFC] font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                       />
                     </div>
                     <div className="flex items-end">
                       <button
                         type="submit"
                         disabled={isSearchingLabs}
-                        className="w-full bg-[#101828] hover:bg-[#1D2939] text-[#FAF9F6] p-2.5 rounded-xl font-bold flex items-center justify-center space-x-1.5 transition-all shadow-2xs"
+                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white p-3 rounded-2xl font-extrabold flex items-center justify-center space-x-2 transition-all shadow-md shadow-emerald-500/25 btn-shimmer"
                       >
                         {isSearchingLabs ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>{t.labSearchBtn}</span>}
                       </button>
@@ -2400,8 +2411,8 @@ export default function Home() {
                   </div>
 
                   {/* Discipline Filter Chips */}
-                  <div className="pt-2 border-t border-[#E7E2D9] dark:border-[#242C3D] flex flex-wrap gap-1.5 items-center">
-                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider mr-1">Discipline:</span>
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5 items-center">
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mr-1">Discipline:</span>
                     {[
                       { id: "All", label: t.labDisciplineAll },
                       { id: "Chemical & Polymers", label: t.labDisciplineChemical },
@@ -2414,10 +2425,10 @@ export default function Home() {
                         type="button"
                         key={d.id}
                         onClick={() => setSelectedDiscipline(d.id)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                        className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${
                           selectedDiscipline === d.id
-                            ? "bg-[#101828] text-white font-bold"
-                            : "bg-[#FAF9F6] dark:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6] hover:bg-[#E7E2D9] border border-[#E7E2D9] dark:border-[#242C3D]"
+                            ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-500/30 scale-[1.02]"
+                            : "bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 dark:border-slate-700"
                         }`}
                       >
                         {d.label}
@@ -2429,39 +2440,39 @@ export default function Home() {
                 {/* Laboratories List */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {filteredLabResults.map((lab, idx) => (
-                    <div key={idx} className="civic-card-hover bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-2xl p-5 shadow-2xs space-y-3 flex flex-col justify-between">
-                      <div className="space-y-2">
+                    <div key={idx} className="glass-card civic-card-hover bg-white/95 dark:bg-[#111827]/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-md space-y-3.5 flex flex-col justify-between border-l-4 border-l-emerald-500">
+                      <div className="space-y-2.5">
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-bold text-sm text-[#101828] dark:text-[#FAF9F6]">{lab.lab_name}</h4>
-                          <span className="text-[10px] bg-[#138808]/10 text-[#138808] border border-[#138808]/30 px-2 py-0.5 rounded font-bold flex-shrink-0">
+                          <h4 className="font-extrabold text-sm text-[#0F172A] dark:text-[#F8FAFC] tracking-tight">{lab.lab_name}</h4>
+                          <span className="text-[10px] bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-full font-extrabold flex-shrink-0">
                             {lab.lab_type}
                           </span>
                         </div>
-                        <p className="text-xs text-[#667085] dark:text-[#98A2B3] flex items-start space-x-1.5">
-                          <MapPin className="w-3.5 h-3.5 text-[#667085] flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-slate-600 dark:text-slate-400 flex items-start space-x-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0 mt-0.5" />
                           <span>{lab.address}</span>
                         </p>
-                        <p className="text-xs text-[#667085] dark:text-[#98A2B3] flex items-center space-x-1.5">
-                          <Phone className="w-3.5 h-3.5 text-[#667085] flex-shrink-0" />
+                        <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center space-x-1.5">
+                          <Phone className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
                           <span>{lab.contact}</span>
                         </p>
                         {lab.tat_days && (
-                          <p className="text-[11px] text-[#FF7A00] font-semibold flex items-center space-x-1">
-                            <Clock className="w-3 h-3 text-[#FF7A00]" />
+                          <p className="text-[11px] text-amber-600 dark:text-amber-400 font-bold flex items-center space-x-1">
+                            <Clock className="w-3 h-3 text-amber-500" />
                             <span>{t.labTat}: {lab.tat_days}</span>
                           </p>
                         )}
-                        <p className="text-xs text-[#101828] dark:text-[#FAF9F6] font-medium bg-[#FAF9F6] dark:bg-[#1F2430] p-2 rounded-lg border border-[#E7E2D9] dark:border-[#242C3D]">
+                        <p className="text-xs text-slate-800 dark:text-slate-200 font-medium bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 leading-relaxed">
                           {t.labScope}: {lab.scope_highlights}
                         </p>
                       </div>
 
-                      <div className="pt-2 border-t border-[#E7E2D9] dark:border-[#242C3D] flex items-center space-x-2">
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center space-x-2">
                         <a
                           href={lab.official_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex-1 text-center bg-[#FAF9F6] dark:bg-[#1F2430] hover:bg-[#101828] hover:text-white text-[#101828] dark:text-[#FAF9F6] py-2 rounded-xl text-xs font-bold block border border-[#E7E2D9] dark:border-[#242C3D] transition-all"
+                          className="flex-1 text-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-2.5 rounded-xl text-xs font-extrabold block transition-all shadow-sm shadow-emerald-500/20"
                         >
                           {t.labOfficialLims}
                         </a>
@@ -2471,7 +2482,7 @@ export default function Home() {
                             setMode("ask_bis");
                             handleSend(q);
                           }}
-                          className="bg-[#FAF9F6] dark:bg-[#1F2430] hover:bg-[#E7E2D9] text-[#101828] dark:text-[#FAF9F6] text-xs px-3 py-2 rounded-xl font-bold border border-[#E7E2D9] dark:border-[#242C3D] transition-colors"
+                          className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-800 dark:text-slate-200 text-xs px-3.5 py-2.5 rounded-xl font-bold border border-slate-200 dark:border-slate-700 transition-colors"
                         >
                           {t.btnAskBisAbout}
                         </button>
@@ -2497,67 +2508,75 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="space-y-4 text-xs sm:text-sm text-[#101828] dark:text-[#FAF9F6]">
+                <div className="space-y-4 text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC]">
                   {/* Card 1: ISI Mark */}
-                  <div className="bg-white dark:bg-[#161B26] rounded-2xl p-5 border border-[#E7E2D9] dark:border-[#242C3D] shadow-2xs space-y-2">
-                    <h3 className="font-extrabold text-base text-[#101828] dark:text-[#FAF9F6] flex items-center space-x-2">
-                      <span className="material-symbols-outlined text-[22px] text-[#2563EB]">verified</span>
+                  <div className="glass-card civic-card-hover bg-white/95 dark:bg-[#111827]/90 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md space-y-3 border-l-4 border-l-blue-600">
+                    <h3 className="font-extrabold text-base text-[#0F172A] dark:text-[#F8FAFC] flex items-center space-x-2.5">
+                      <span className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[22px]">verified</span>
+                      </span>
                       <span>{t.verifyIsiHeading}</span>
                     </h3>
-                    <p className="text-[#667085] dark:text-[#98A2B3] leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                       {t.verifyIsiDesc}
                     </p>
-                    <ul className="list-disc list-inside space-y-1 text-[#101828] dark:text-[#FAF9F6] pl-2">
-                      <li>Official <strong>BIS Standard Mark (ISI logo)</strong>.</li>
+                    <ul className="list-disc list-inside space-y-1.5 text-slate-800 dark:text-slate-200 pl-2">
+                      <li>Official <strong className="text-blue-600 dark:text-blue-400">BIS Standard Mark (ISI logo)</strong>.</li>
                       <li>The specific <strong>IS Standard Number</strong> at the top (e.g. <em>IS 17526</em>).</li>
                       <li>A unique <strong>7 to 10-digit CML Licence Number</strong> at the bottom (e.g. <em>CM/L-XXXXXXXXXX</em>).</li>
                     </ul>
                   </div>
 
                   {/* Card 2: Gold HUID */}
-                  <div className="bg-white dark:bg-[#161B26] rounded-2xl p-5 border border-[#E7E2D9] dark:border-[#242C3D] shadow-2xs space-y-2">
-                    <h3 className="font-extrabold text-base text-[#101828] dark:text-[#FAF9F6] flex items-center space-x-2">
-                      <span className="material-symbols-outlined text-[22px] text-[#FF7A00]">diamond</span>
+                  <div className="glass-card civic-card-hover bg-white/95 dark:bg-[#111827]/90 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md space-y-3 border-l-4 border-l-amber-500">
+                    <h3 className="font-extrabold text-base text-[#0F172A] dark:text-[#F8FAFC] flex items-center space-x-2.5">
+                      <span className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[22px]">diamond</span>
+                      </span>
                       <span>{t.verifyHuidHeading}</span>
                     </h3>
-                    <p className="text-[#667085] dark:text-[#98A2B3] leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                       {t.verifyHuidDesc}
                     </p>
-                    <ul className="list-disc list-inside space-y-1 text-[#101828] dark:text-[#FAF9F6] pl-2">
-                      <li><strong>BIS Logo (Triangle)</strong>.</li>
+                    <ul className="list-disc list-inside space-y-1.5 text-slate-800 dark:text-slate-200 pl-2">
+                      <li><strong className="text-amber-600 dark:text-amber-400">BIS Logo (Triangle)</strong>.</li>
                       <li><strong>Purity &amp; Fineness Mark</strong>: 22K916, 18K750, 14K585, etc.</li>
                       <li><strong>6-Digit Alphanumeric HUID</strong> (Hallmarking Unique ID laser-engraved at a recognized AHC).</li>
                     </ul>
                   </div>
 
                   {/* Card 3: CRS Electronics */}
-                  <div className="bg-white dark:bg-[#161B26] rounded-2xl p-5 border border-[#E7E2D9] dark:border-[#242C3D] shadow-2xs space-y-2">
-                    <h3 className="font-extrabold text-base text-[#101828] dark:text-[#FAF9F6] flex items-center space-x-2">
-                      <span className="material-symbols-outlined text-[22px] text-[#138808]">devices</span>
+                  <div className="glass-card civic-card-hover bg-white/95 dark:bg-[#111827]/90 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md space-y-3 border-l-4 border-l-emerald-600">
+                    <h3 className="font-extrabold text-base text-[#0F172A] dark:text-[#F8FAFC] flex items-center space-x-2.5">
+                      <span className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[22px]">devices</span>
+                      </span>
                       <span>{t.verifyCrsHeading}</span>
                     </h3>
-                    <p className="text-[#667085] dark:text-[#98A2B3] leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                       {t.verifyCrsDesc}
                     </p>
                   </div>
 
                   {/* Card 4: Grievance & BIS Care App */}
-                  <div className="bg-white dark:bg-[#161B26] rounded-2xl p-5 border border-[#E7E2D9] dark:border-[#242C3D] shadow-2xs space-y-3">
-                    <h3 className="font-extrabold text-base text-[#101828] dark:text-[#FAF9F6] flex items-center space-x-2">
-                      <span className="material-symbols-outlined text-[22px] text-[#D92D20]">gavel</span>
+                  <div className="glass-card civic-card-hover bg-white/95 dark:bg-[#111827]/90 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md space-y-4 border-l-4 border-l-rose-500">
+                    <h3 className="font-extrabold text-base text-[#0F172A] dark:text-[#F8FAFC] flex items-center space-x-2.5">
+                      <span className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[22px]">gavel</span>
+                      </span>
                       <span>{t.verifyGrievanceHeading}</span>
                     </h3>
-                    <p className="text-[#667085] dark:text-[#98A2B3] leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                       {t.verifyGrievanceDesc}
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                      <div className="p-3 bg-[#FAF9F6] dark:bg-[#1F2430] rounded-xl border border-[#E7E2D9] dark:border-[#242C3D]">
-                        <span className="font-bold text-[#101828] dark:text-[#FAF9F6] block">Verify License Details</span>
-                        <span className="text-[#667085] text-[11px]">Enter CML number on BIS Care App to inspect factory name, address, and validity status.</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                        <span className="font-extrabold text-blue-600 dark:text-blue-400 block mb-1">Verify License Details</span>
+                        <span className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">Enter CML number on BIS Care App to inspect factory name, address, and validity status.</span>
                       </div>
-                      <div className="p-3 bg-[#FAF9F6] dark:bg-[#1F2430] rounded-xl border border-[#E7E2D9] dark:border-[#242C3D]">
-                        <span className="font-bold text-[#101828] dark:text-[#FAF9F6] block">Verify Gold HUID</span>
-                        <span className="text-[#667085] text-[11px]">Enter 6-digit HUID code to inspect jeweller registration and purity certification.</span>
+                      <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                        <span className="font-extrabold text-amber-600 dark:text-amber-400 block mb-1">Verify Gold HUID</span>
+                        <span className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">Enter 6-digit HUID code to inspect jeweller registration and purity certification.</span>
                       </div>
                     </div>
                   </div>

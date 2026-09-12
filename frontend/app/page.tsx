@@ -1394,12 +1394,12 @@ export default function Home() {
   }, [sessions, sessionSearchQuery]);
 
   return (
-    <div className="bg-[#FAF9F6] dark:bg-[#0C111D] text-[#101828] dark:text-[#FAF9F6] antialiased min-h-screen flex flex-col font-sans selection:bg-[#E7E2D9] dark:selection:bg-[#242C3D]">
+    <div className="bg-[#FAF9F6] dark:bg-[#0C111D] text-[#101828] dark:text-[#FAF9F6] antialiased h-screen flex flex-col font-sans selection:bg-[#E7E2D9] dark:selection:bg-[#242C3D] overflow-hidden">
       {/* ================= 1. SUBTLE TRICOLOR MICRO-ACCENT RIBBON ================= */}
-      <div className="tricolor-ribbon h-1 w-full opacity-90"></div>
+      <div className="tricolor-ribbon h-1 w-full opacity-90 flex-shrink-0"></div>
 
       {/* ================= 2. SOVEREIGN TOP UTILITY BAR (Royal Midnight Navy) ================= */}
-      <div className="bg-gradient-to-r from-[#060D1A] via-[#0F172A] to-[#060D1A] text-slate-200 text-[11px] border-b border-slate-800/80 shadow-inner">
+      <div className="bg-gradient-to-r from-[#060D1A] via-[#0F172A] to-[#060D1A] text-slate-200 text-[11px] border-b border-slate-800/80 shadow-inner flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 py-1.5 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center space-x-3">
             <span className="flex items-center space-x-2 font-medium tracking-wide">
@@ -1673,7 +1673,7 @@ export default function Home() {
       </header>
 
       {/* ================= 4. STATUTORY GAZETTE TICKER (Midnight Indigo Ticker) ================= */}
-      <div className="bg-gradient-to-r from-[#070D1C] via-[#101B38] to-[#070D1C] text-slate-100 border-b border-indigo-950/80 py-1.5 px-4 overflow-hidden relative shadow-inner">
+      <div className="bg-gradient-to-r from-[#070D1C] via-[#101B38] to-[#070D1C] text-slate-100 border-b border-indigo-950/80 py-1.5 px-4 overflow-hidden relative shadow-inner flex-shrink-0 z-20">
         <div className="max-w-7xl mx-auto flex items-center">
           <div className="flex items-center space-x-1.5 bg-gradient-to-r from-[#FF6B00] to-[#FFA800] text-white text-[10px] font-black uppercase px-3 py-0.5 rounded-full mr-3 flex-shrink-0 z-10 shadow-md shadow-orange-500/30">
             <span className="material-symbols-outlined text-[13px] animate-bounce">bolt</span>
@@ -1697,97 +1697,115 @@ export default function Home() {
       </div>
 
       {/* ================= 5. MAIN WORKSPACE WITH COLLAPSIBLE SIDEBAR ================= */}
-      <div className="flex-1 max-w-7xl mx-auto w-full flex overflow-hidden">
+      <div className="flex-1 min-h-0 max-w-7xl mx-auto w-full flex overflow-hidden">
 
         {/* ── LEFT SIDEBAR: NEW CHAT & CONSULTATION HISTORY (Midnight Royal Slate) ─────────── */}
         {sidebarOpen && (
-          <aside className="w-64 sm:w-72 bg-gradient-to-b from-[#0A101D] via-[#0F172A] to-[#070B14] text-slate-100 border-r border-slate-800/80 flex flex-col flex-shrink-0 p-3.5 space-y-3.5 shadow-2xl">
-            {/* New Chat Button (Vibrant Saffron Shimmer) */}
+          <aside className="w-64 sm:w-72 bg-gradient-to-b from-[#0A101D] via-[#0F172A] to-[#070B14] text-slate-100 border-r border-slate-800/80 flex flex-col flex-shrink-0 p-3.5 space-y-3.5 shadow-2xl h-full max-h-full min-h-0 overflow-y-auto sidebar-scroll">
+            {/* New Chat Button (Vibrant Saffron Shimmer + Interactive Hover) */}
             <button
               onClick={startNewChat}
-              className="w-full bg-gradient-to-r from-[#FF6B00] via-[#FFA800] to-[#FF6B00] hover:from-[#EA580C] hover:to-[#F59E0B] text-white py-3 px-4 rounded-2xl text-xs font-extrabold flex items-center justify-center space-x-2 shadow-md shadow-orange-500/30 btn-shimmer transition-all"
+              className="group relative w-full bg-gradient-to-r from-[#FF6B00] via-[#FFA800] to-[#FF6B00] hover:from-[#EA580C] hover:via-[#F59E0B] hover:to-[#D97706] text-white py-3 px-4 rounded-2xl text-xs font-black flex items-center justify-center space-x-2 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 btn-shimmer cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300 flex-shrink-0" />
               <span>+ {t.newConsultation}</span>
             </button>
 
             {/* Quick Mode Navigation in Sidebar */}
-            <div className="space-y-1 pt-2 border-t border-slate-800/80">
-              <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-2 py-1">
-                Navigation
+            <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
+              <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-2 py-0.5 flex items-center justify-between">
+                <span>Navigation</span>
+                <span className="text-[9px] font-mono text-slate-400">4 MODES</span>
               </div>
+
+              {/* Ask BIS */}
               <button
                 onClick={() => setMode("ask_bis")}
-                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
+                className={`sidebar-interactive-item group w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-200 border cursor-pointer ${
                   mode === "ask_bis"
-                    ? "bg-orange-500/15 text-orange-400 border-l-4 border-orange-500 shadow-sm"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-orange-500/15 text-orange-400 border-orange-500/40 shadow-sm shadow-orange-500/20 font-black"
+                    : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/80 hover:border-slate-700/70 hover:shadow-md"
                 }`}
               >
-                <span className="material-symbols-outlined text-[17px]">smart_toy</span>
-                <span>{t.tabAskBis}</span>
+                <div className="flex items-center space-x-2.5">
+                  <span className={`material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform duration-200 ${mode === "ask_bis" ? "text-orange-400" : "text-slate-400 group-hover:text-orange-400"}`}>smart_toy</span>
+                  <span>{t.tabAskBis}</span>
+                </div>
+                {mode === "ask_bis" && <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shadow-xs shadow-orange-400"></span>}
               </button>
 
+              {/* Find My Standard */}
               <button
                 onClick={() => setMode("find_my_standard")}
-                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
+                className={`sidebar-interactive-item group w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-200 border cursor-pointer ${
                   mode === "find_my_standard"
-                    ? "bg-blue-500/15 text-blue-400 border-l-4 border-blue-500 shadow-sm"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-blue-500/15 text-blue-400 border-blue-500/40 shadow-sm shadow-blue-500/20 font-black"
+                    : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/80 hover:border-slate-700/70 hover:shadow-md"
                 }`}
               >
-                <span className="material-symbols-outlined text-[17px]">rule</span>
-                <span>{t.tabFindStandard}</span>
+                <div className="flex items-center space-x-2.5">
+                  <span className={`material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform duration-200 ${mode === "find_my_standard" ? "text-blue-400" : "text-slate-400 group-hover:text-blue-400"}`}>rule</span>
+                  <span>{t.tabFindStandard}</span>
+                </div>
+                {mode === "find_my_standard" && <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-xs shadow-blue-400"></span>}
               </button>
 
+              {/* Laboratories (LIMS) */}
               <button
                 onClick={() => setMode("laboratories")}
-                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
+                className={`sidebar-interactive-item group w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-200 border cursor-pointer ${
                   mode === "laboratories"
-                    ? "bg-emerald-500/15 text-emerald-400 border-l-4 border-emerald-500 shadow-sm"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/40 shadow-sm shadow-emerald-500/20 font-black"
+                    : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/80 hover:border-slate-700/70 hover:shadow-md"
                 }`}
               >
-                <span className="material-symbols-outlined text-[17px]">biotech</span>
-                <span>{t.tabLabs}</span>
+                <div className="flex items-center space-x-2.5">
+                  <span className={`material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform duration-200 ${mode === "laboratories" ? "text-emerald-400" : "text-slate-400 group-hover:text-emerald-400"}`}>biotech</span>
+                  <span>{t.tabLabs}</span>
+                </div>
+                {mode === "laboratories" && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-xs shadow-emerald-400"></span>}
               </button>
 
+              {/* Verify Marks & HUID */}
               <button
                 onClick={() => setMode("verify_marks")}
-                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-2.5 transition-all ${
+                className={`sidebar-interactive-item group w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-200 border cursor-pointer ${
                   mode === "verify_marks"
-                    ? "bg-purple-500/15 text-purple-400 border-l-4 border-purple-500 shadow-sm"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-purple-500/15 text-purple-400 border-purple-500/40 shadow-sm shadow-purple-500/20 font-black"
+                    : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/80 hover:border-slate-700/70 hover:shadow-md"
                 }`}
               >
-                <span className="material-symbols-outlined text-[17px]">verified</span>
-                <span>{t.tabVerifyMarks}</span>
+                <div className="flex items-center space-x-2.5">
+                  <span className={`material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform duration-200 ${mode === "verify_marks" ? "text-purple-400" : "text-slate-400 group-hover:text-purple-400"}`}>verified</span>
+                  <span>{t.tabVerifyMarks}</span>
+                </div>
+                {mode === "verify_marks" && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-xs shadow-purple-400"></span>}
               </button>
             </div>
 
-            {/* Session Search Bar */}
+            {/* Session Search Bar with Hover & Focus Highlight */}
             <div className="pt-2 border-t border-slate-800/80">
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+              <div className="relative group">
+                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400 group-hover:text-orange-400 transition-colors" />
                 <input
                   type="text"
                   value={sessionSearchQuery}
                   onChange={e => setSessionSearchQuery(e.target.value)}
                   placeholder={t.searchHistoryPlaceholder}
-                  className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-8 pr-2.5 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all font-medium"
+                  className="w-full bg-slate-900/90 border border-slate-700/80 group-hover:border-orange-500/50 rounded-xl pl-8 pr-2.5 py-1.5 text-xs text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all font-medium"
                 />
               </div>
             </div>
 
             {/* Saved Chat Sessions */}
-            <div className="flex-1 overflow-y-auto space-y-1.5 custom-scroll pr-1">
+            <div className="flex-1 min-h-[140px] overflow-y-auto space-y-1.5 sidebar-scroll pr-1">
               <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                 <span>{t.consultationsTitle}</span>
-                <span className="font-mono text-[9px] bg-slate-800/80 text-orange-400 px-2 py-0.5 rounded-full font-bold">{filteredSessions.length}</span>
+                <span className="font-mono text-[9px] bg-slate-800/90 text-orange-400 px-2 py-0.5 rounded-full font-bold border border-slate-700/50">{filteredSessions.length}</span>
               </div>
 
               {filteredSessions.length === 0 ? (
-                <div className="p-3 text-center text-xs text-slate-500 italic">
+                <div className="p-3 text-center text-xs text-slate-400 italic bg-slate-900/40 rounded-xl border border-slate-800/50">
                   {t.noPastChats}
                 </div>
               ) : (
@@ -1795,19 +1813,19 @@ export default function Home() {
                   <div
                     key={s.id}
                     onClick={() => switchSession(s)}
-                    className={`group px-3 py-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all ${
+                    className={`sidebar-interactive-item group px-3 py-2.5 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all duration-200 border ${
                       s.id === currentSessionId
-                        ? "bg-gradient-to-r from-orange-500/20 via-orange-500/10 to-transparent text-white font-bold border-l-3 border-orange-500 shadow-sm"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                        ? "bg-gradient-to-r from-orange-500/20 via-orange-500/10 to-slate-900/60 text-white font-bold border-l-4 border-l-orange-500 border-orange-500/30 shadow-md"
+                        : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/80 hover:border-slate-700/70 hover:shadow-sm"
                     }`}
                   >
-                    <div className="flex items-center space-x-2 truncate">
-                      <MessageSquare className="w-3.5 h-3.5 flex-shrink-0 text-orange-400" />
+                    <div className="flex items-center space-x-2.5 truncate">
+                      <MessageSquare className="w-3.5 h-3.5 flex-shrink-0 text-orange-400 group-hover:scale-110 transition-transform" />
                       <span className="truncate">{s.title || t.newConsultation}</span>
                     </div>
                     <button
                       onClick={(e) => deleteSession(s.id, e)}
-                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-400 p-0.5 transition-opacity"
+                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-400 hover:bg-rose-500/20 p-1 rounded-md transition-all duration-200"
                       title="Delete session"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -1818,19 +1836,19 @@ export default function Home() {
             </div>
 
             {/* Sidebar Bottom: Clear History & Grounding */}
-            <div className="pt-2 border-t border-slate-800/80 space-y-2">
+            <div className="pt-2 border-t border-slate-800/80 space-y-2 mt-auto">
               {sessions.length > 1 && (
                 <button
                   onClick={clearAllSessions}
-                  className="w-full text-center text-[10px] text-slate-400 hover:text-rose-400 py-1 transition-colors flex items-center justify-center space-x-1"
+                  className="group w-full text-center text-[11px] text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 hover:border-rose-900/50 border border-transparent py-1.5 px-2 rounded-xl transition-all duration-200 flex items-center justify-center space-x-1.5 cursor-pointer font-semibold"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform duration-200" />
                   <span>{t.clearHistory}</span>
                 </button>
               )}
-              <div className="text-[11px] text-slate-300 bg-slate-900/80 p-3 rounded-2xl space-y-1 border border-slate-800 shadow-sm">
+              <div className="group text-[11px] text-slate-300 bg-slate-900/90 hover:bg-slate-800/90 p-3 rounded-2xl space-y-1 border border-slate-800 hover:border-emerald-500/40 shadow-sm hover:shadow-lg hover:shadow-emerald-950/20 transition-all duration-200 cursor-default">
                 <div className="font-extrabold text-white flex items-center space-x-1.5">
-                  <span className="material-symbols-outlined text-[15px] text-[#10B981]">verified_user</span>
+                  <span className="material-symbols-outlined text-[16px] text-[#10B981] group-hover:scale-110 transition-transform duration-200">verified_user</span>
                   <span>{t.badgeSource}</span>
                 </div>
                 <p className="text-[10px] text-slate-400 leading-tight">Grounded against 741 verified Indian Standards &amp; Gazette notifications.</p>
@@ -1840,7 +1858,7 @@ export default function Home() {
         )}
 
         {/* ── MAIN CONTENT AREA ─────────────────────────────────────── */}
-        <div className="flex-1 flex flex-col min-h-0 h-[calc(100vh-140px)] overflow-hidden bg-gradient-to-br from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0]/40 dark:from-[#060A14] dark:via-[#0A0F1D] dark:to-[#060A14]">
+        <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden bg-gradient-to-br from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0]/40 dark:from-[#060A14] dark:via-[#0A0F1D] dark:to-[#060A14]">
 
           {/* ================= MODE 1: ASK BIS CHATBOT ================= */}
           {mode === "ask_bis" && (

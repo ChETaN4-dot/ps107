@@ -1399,13 +1399,13 @@ export default function Home() {
       <div className="tricolor-ribbon h-1 w-full opacity-90 flex-shrink-0"></div>
 
       {/* ================= 2. SOVEREIGN TOP UTILITY BAR (Royal Midnight Navy) ================= */}
-      <div className="bg-gradient-to-r from-[#060D1A] via-[#0F172A] to-[#060D1A] text-slate-200 text-[11px] border-b border-slate-800/80 shadow-inner flex-shrink-0">
-        <div className="max-w-7xl mx-auto px-4 py-1.5 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center space-x-3">
-            <span className="flex items-center space-x-2 font-medium tracking-wide">
-              <span className="relative flex h-2.5 w-2.5">
+      <div className="bg-gradient-to-r from-[#060D1A] via-[#0F172A] to-[#060D1A] text-slate-200 text-[10px] sm:text-[11px] border-b border-slate-800/80 shadow-inner flex-shrink-0">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-1 sm:py-1.5 flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <span className="flex items-center space-x-1.5 sm:space-x-2 font-medium tracking-wide truncate">
+              <span className="relative flex h-2 sm:h-2.5 w-2 sm:w-2.5 flex-shrink-0">
                 <span className="radar-ring absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#10B981]"></span>
+                <span className="relative inline-flex rounded-full h-2 sm:h-2.5 w-2 sm:w-2.5 bg-[#10B981]"></span>
               </span>
               <span className="font-extrabold text-white tracking-tight">{t.govIndia}</span>
               <span className="text-slate-600 hidden sm:inline">•</span>
@@ -1413,7 +1413,7 @@ export default function Home() {
             </span>
           </div>
 
-          <div className="flex items-center space-x-3 text-slate-200">
+          <div className="flex items-center space-x-2 sm:space-x-3 text-slate-200 flex-shrink-0">
             {/* Font Scaler */}
             <div className="hidden sm:flex items-center space-x-1.5 bg-slate-900/80 px-2.5 py-0.5 rounded-lg border border-slate-700/60 shadow-sm">
               <span className="text-[10px] text-slate-400 mr-1">{t.fontScale}</span>
@@ -1441,12 +1441,12 @@ export default function Home() {
 
             <span className="text-slate-700 hidden sm:inline">|</span>
 
-            <a className="hover:text-orange-400 transition-colors flex items-center space-x-1 text-slate-200 font-bold" href="https://www.bis.gov.in" target="_blank" rel="noreferrer">
+            <a className="hover:text-orange-400 transition-colors hidden sm:flex items-center space-x-1 text-slate-200 font-bold" href="https://www.bis.gov.in" target="_blank" rel="noreferrer">
               <span>bis.gov.in</span>
               <span className="material-symbols-outlined text-[13px]">open_in_new</span>
             </a>
 
-            <span className="text-slate-700">|</span>
+            <span className="text-slate-700 hidden sm:inline">|</span>
 
             <span className="text-orange-400 font-extrabold flex items-center space-x-1">
               <span className="material-symbols-outlined text-[14px]">call</span>
@@ -1458,21 +1458,21 @@ export default function Home() {
 
       {/* ================= 3. INSTITUTIONAL HEADER & NAVIGATION ================= */}
       <header className="glass-header bg-white/95 dark:bg-[#0B101D]/90 backdrop-blur-2xl border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
-          <div className="flex items-center space-x-3.5">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-1.5 sm:gap-4">
+          <div className="flex items-center space-x-2 sm:space-x-3.5 min-w-0">
             {/* Sidebar toggle button */}
             <button
               onClick={() => setSidebarOpen(p => !p)}
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[#0F172A] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+              className="p-1.5 sm:p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[#0F172A] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs flex-shrink-0 cursor-pointer"
               title={t.toggleSidebar}
             >
-              <span className="material-symbols-outlined text-[20px]">{sidebarOpen ? "menu_open" : "menu"}</span>
+              <span className="material-symbols-outlined text-[18px] sm:text-[20px]">{sidebarOpen ? "menu_open" : "menu"}</span>
             </button>
 
             {/* Emblem & Branding */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-slate-800 dark:to-slate-900 border border-orange-200/70 dark:border-orange-500/20 flex flex-col items-center justify-center p-0.5 shadow-sm overflow-hidden flex-shrink-0">
-                <svg className="w-6 h-6 text-[#FF6B00] dark:text-[#FFA800]" fill="currentColor" viewBox="0 0 100 100">
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-slate-800 dark:to-slate-900 border border-orange-200/70 dark:border-orange-500/20 flex flex-col items-center justify-center p-0.5 shadow-sm overflow-hidden flex-shrink-0">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF6B00] dark:text-[#FFA800]" fill="currentColor" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" fill="none" r="45" stroke="currentColor" strokeWidth="4"></circle>
                   <circle cx="50" cy="50" fill="none" r="10" stroke="currentColor" strokeWidth="3"></circle>
                   <circle cx="50" cy="50" fill="currentColor" r="3"></circle>
@@ -1487,12 +1487,12 @@ export default function Home() {
                     <line x1="43" x2="18" y1="57" y2="82"></line>
                   </g>
                 </svg>
-                <span className="text-[6.5px] font-bold text-[#FF6B00] dark:text-[#FFA800] leading-none mt-0.5 font-serif">सत्यमेव जयते</span>
+                <span className="text-[5px] sm:text-[6.5px] font-bold text-[#FF6B00] dark:text-[#FFA800] leading-none mt-0.5 font-serif">सत्यमेव जयते</span>
               </div>
 
-              <div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-base sm:text-xl font-black bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent tracking-tight">{t.bisTitle}</span>
+              <div className="min-w-0">
+                <div className="flex items-center space-x-1.5 sm:space-x-2">
+                  <span className="text-sm sm:text-xl font-black bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent tracking-tight whitespace-nowrap">{t.bisTitle}</span>
                   <span className="hidden sm:inline text-slate-400 text-sm font-normal">|</span>
                   <span className="hidden sm:inline text-lg font-extrabold text-[#FF6B00] dark:text-[#FFA800]">{t.bisHindiTitle}</span>
                 </div>
@@ -1509,7 +1509,7 @@ export default function Home() {
           <nav className="hidden md:flex items-center space-x-1.5 bg-[#FAF9F6] dark:bg-[#1E2330] p-1.5 rounded-2xl border border-[#E7E2D9] dark:border-[#242C3D] shadow-inner">
             <button
               onClick={() => setMode("ask_bis")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 cursor-pointer ${
                 mode === "ask_bis"
                   ? "bg-gradient-to-r from-[#FF6B00] to-[#FFA800] text-white shadow-md shadow-orange-500/25 scale-[1.02]"
                   : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
@@ -1521,7 +1521,7 @@ export default function Home() {
 
             <button
               onClick={() => setMode("find_my_standard")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 cursor-pointer ${
                 mode === "find_my_standard"
                   ? "bg-gradient-to-r from-[#2563EB] to-[#4F46E5] text-white shadow-md shadow-blue-500/25 scale-[1.02]"
                   : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
@@ -1533,7 +1533,7 @@ export default function Home() {
 
             <button
               onClick={() => setMode("laboratories")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 cursor-pointer ${
                 mode === "laboratories"
                   ? "bg-gradient-to-r from-[#10B981] to-[#0D9488] text-white shadow-md shadow-emerald-500/25 scale-[1.02]"
                   : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
@@ -1545,7 +1545,7 @@ export default function Home() {
 
             <button
               onClick={() => setMode("verify_marks")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all duration-200 cursor-pointer ${
                 mode === "verify_marks"
                   ? "bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white shadow-md shadow-purple-500/25 scale-[1.02]"
                   : "text-[#667085] dark:text-[#98A2B3] hover:text-[#101828] dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60"
@@ -1556,27 +1556,27 @@ export default function Home() {
             </button>
           </nav>
 
-          {/* Right Controls: Persona, Language, Theme */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2">
-            {/* Click-driven Persona dropdown — hidden on mobile */}
-            <div className="relative hidden sm:block" ref={personaDropdownRef}>
+          {/* Right Controls: Persona, Language, Theme (Visible on Mobile) */}
+          <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+            {/* Click-driven Persona dropdown */}
+            <div className="relative" ref={personaDropdownRef}>
               <button
                 type="button"
                 onClick={() => {
                   setPersonaDropdownOpen(prev => !prev);
                   setLanguageDropdownOpen(false);
                 }}
-                className="bg-[#FAF9F6] dark:bg-[#1E2330] hover:bg-white border border-[#E7E2D9] dark:border-[#242C3D] rounded-lg px-2.5 py-1.5 flex items-center space-x-1.5 text-xs font-bold text-[#101828] dark:text-[#FAF9F6] shadow-2xs transition-colors"
+                className="bg-[#FAF9F6] dark:bg-[#1E2330] hover:bg-white dark:hover:bg-[#252c3c] border border-[#E7E2D9] dark:border-[#242C3D] rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 flex items-center space-x-1 sm:space-x-1.5 text-[11px] sm:text-xs font-bold text-[#101828] dark:text-[#FAF9F6] shadow-2xs transition-colors cursor-pointer whitespace-nowrap"
               >
-                <span className="w-2 h-2 rounded-full bg-[#FF7A00]"></span>
-                <span>{currentPersona.label}</span>
-                <span className={`material-symbols-outlined text-[15px] text-[#667085] transition-transform ${personaDropdownOpen ? "rotate-180" : ""}`}>
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#FF7A00] flex-shrink-0"></span>
+                <span className="max-w-[55px] xs:max-w-[80px] sm:max-w-none truncate">{currentPersona.label}</span>
+                <span className={`material-symbols-outlined text-[14px] sm:text-[15px] text-[#667085] transition-transform flex-shrink-0 ${personaDropdownOpen ? "rotate-180" : ""}`}>
                   arrow_drop_down
                 </span>
               </button>
 
               {personaDropdownOpen && (
-                <div className="absolute right-0 mt-1.5 w-64 bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-xl shadow-xl py-2 z-50 text-xs animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="absolute right-0 mt-1.5 w-56 sm:w-64 max-w-[calc(100vw-20px)] bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-xl shadow-2xl py-2 z-50 text-xs animate-in fade-in slide-in-from-top-1 duration-150 max-h-80 overflow-y-auto">
                   <div className="px-3 py-1 font-bold text-[#667085] uppercase text-[10px] tracking-wider border-b border-[#E7E2D9] dark:border-[#242C3D] mb-1">
                     {t.personaHeader}
                   </div>
@@ -1593,7 +1593,7 @@ export default function Home() {
                           setPersonaDropdownOpen(false);
                           saveSessionState(messages, pKey, language);
                         }}
-                        className={`w-full text-left px-3 py-2 flex items-center justify-between transition-colors ${
+                        className={`w-full text-left px-3 py-2 flex items-center justify-between transition-colors cursor-pointer ${
                           isSelected
                             ? "bg-[#FAF9F6] dark:bg-[#1F2430] font-bold text-[#101828] dark:text-[#FAF9F6]"
                             : "hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6]"
@@ -1611,25 +1611,25 @@ export default function Home() {
               )}
             </div>
 
-            {/* Click-driven 11-Language Selector — hidden on mobile */}
-            <div className="relative hidden sm:block" ref={languageDropdownRef}>
+            {/* Click-driven 11-Language Selector */}
+            <div className="relative" ref={languageDropdownRef}>
               <button
                 type="button"
                 onClick={() => {
                   setLanguageDropdownOpen(prev => !prev);
                   setPersonaDropdownOpen(false);
                 }}
-                className="bg-[#FAF9F6] dark:bg-[#1E2330] border border-[#E7E2D9] dark:border-[#242C3D] rounded-lg px-2.5 py-1.5 flex items-center space-x-1.5 text-xs font-bold text-[#101828] dark:text-[#FAF9F6] shadow-2xs transition-colors"
+                className="bg-[#FAF9F6] dark:bg-[#1E2330] hover:bg-white dark:hover:bg-[#252c3c] border border-[#E7E2D9] dark:border-[#242C3D] rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 flex items-center space-x-1 sm:space-x-1.5 text-[11px] sm:text-xs font-bold text-[#101828] dark:text-[#FAF9F6] shadow-2xs transition-colors cursor-pointer whitespace-nowrap"
               >
-                <span>{LANGUAGES.find(l => l.id === language)?.flag || "🇮🇳"}</span>
-                <span>{LANGUAGES.find(l => l.id === language)?.nativeName || "English"}</span>
-                <span className={`material-symbols-outlined text-[15px] text-[#667085] transition-transform ${languageDropdownOpen ? "rotate-180" : ""}`}>
+                <span className="text-xs sm:text-sm flex-shrink-0">{LANGUAGES.find(l => l.id === language)?.flag || "🇮🇳"}</span>
+                <span className="max-w-[48px] xs:max-w-[70px] sm:max-w-none truncate">{LANGUAGES.find(l => l.id === language)?.nativeName || "English"}</span>
+                <span className={`material-symbols-outlined text-[14px] sm:text-[15px] text-[#667085] transition-transform flex-shrink-0 ${languageDropdownOpen ? "rotate-180" : ""}`}>
                   expand_more
                 </span>
               </button>
 
               {languageDropdownOpen && (
-                <div className="absolute right-0 mt-1.5 w-56 bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-xl shadow-xl py-1.5 z-50 text-xs max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="absolute right-0 mt-1.5 w-52 sm:w-56 max-w-[calc(100vw-20px)] bg-white dark:bg-[#161B26] border border-[#E7E2D9] dark:border-[#242C3D] rounded-xl shadow-2xl py-1.5 z-50 text-xs max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="px-3 py-1 font-bold text-[#667085] uppercase text-[10px] tracking-wider border-b border-[#E7E2D9] dark:border-[#242C3D] mb-1">
                     {t.languageHeader}
                   </div>
@@ -1642,7 +1642,7 @@ export default function Home() {
                         onClick={() => {
                           handleLanguageChange(langItem.id);
                         }}
-                        className={`w-full text-left px-3 py-2 flex items-center justify-between transition-colors ${
+                        className={`w-full text-left px-3 py-2 flex items-center justify-between transition-colors cursor-pointer ${
                           isSelected
                             ? "font-bold text-[#101828] dark:text-[#FAF9F6] bg-[#FAF9F6] dark:bg-[#1F2430]"
                             : "hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430] text-[#101828] dark:text-[#FAF9F6]"
@@ -1660,10 +1660,10 @@ export default function Home() {
               )}
             </div>
 
-            {/* Dark Mode Toggle */}
+            {/* Dark Mode Toggle — hidden on mobile since bottom nav bar includes Theme */}
             <button
               onClick={toggleDarkMode}
-              className="p-1.5 text-[#101828] dark:text-[#FAF9F6] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430] rounded-lg border border-[#E7E2D9] dark:border-[#242C3D] transition-colors"
+              className="hidden sm:flex p-1.5 text-[#101828] dark:text-[#FAF9F6] hover:bg-[#FAF9F6] dark:hover:bg-[#1F2430] rounded-lg border border-[#E7E2D9] dark:border-[#242C3D] transition-colors cursor-pointer"
               title="Toggle Theme"
             >
               <span className="material-symbols-outlined text-[18px]">{darkMode ? "light_mode" : "dark_mode"}</span>
@@ -2179,7 +2179,7 @@ export default function Home() {
               </div>
 
               {/* Bottom Chat Input Dock */}
-              <div className="p-3 sm:p-4 glass-header bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800 shadow-lg">
+              <div className="p-2.5 sm:p-4 pb-16 sm:pb-4 glass-header bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800 shadow-lg">
                 <div className="max-w-3xl mx-auto space-y-2.5">
                   <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
                     <label className="flex items-center space-x-2 cursor-pointer font-medium hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
@@ -2246,7 +2246,7 @@ export default function Home() {
 
           {/* ================= MODE 2: FIND MY STANDARD ================= */}
           {mode === "find_my_standard" && (
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scroll">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 md:pb-6 space-y-6 custom-scroll">
               <div className="max-w-4xl mx-auto space-y-6">
                 <div className="text-center space-y-2">
                   <span className="p-2 bg-[#FAF9F6] dark:bg-[#1E2330] border border-[#E7E2D9] dark:border-[#242C3D] text-[#FF7A00] rounded-xl inline-flex mb-1">
@@ -2389,7 +2389,7 @@ export default function Home() {
 
           {/* ================= MODE 3: LABORATORIES (LIMS) ================= */}
           {mode === "laboratories" && (
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scroll">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 md:pb-6 space-y-6 custom-scroll">
               <div className="max-w-4xl mx-auto space-y-6">
                 <div className="text-center space-y-2">
                   <span className="p-2 bg-[#FAF9F6] dark:bg-[#1E2330] border border-[#E7E2D9] dark:border-[#242C3D] text-[#138808] rounded-xl inline-flex mb-1">
@@ -2521,7 +2521,7 @@ export default function Home() {
 
           {/* ================= MODE 4: VERIFY MARKS & HUID ================= */}
           {mode === "verify_marks" && (
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scroll">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 md:pb-6 space-y-6 custom-scroll">
               <div className="max-w-3xl mx-auto space-y-6">
                 <div className="text-center space-y-2">
                   <span className="p-2 bg-[#FAF9F6] dark:bg-[#1E2330] border border-[#E7E2D9] dark:border-[#242C3D] text-[#138808] rounded-xl inline-flex mb-1">
@@ -2614,7 +2614,7 @@ export default function Home() {
       </div>
 
       {/* ================= 6. INSTITUTIONAL CIVIC FOOTER (Deep Ink Navy) ================= */}
-      <footer className="bg-[#101828] text-[#FAF9F6] border-t border-[#242C3D]">
+      <footer className="hidden md:block bg-[#101828] text-[#FAF9F6] border-t border-[#242C3D]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#98A2B3] gap-2">
             <p>{t.footerCopyright}</p>

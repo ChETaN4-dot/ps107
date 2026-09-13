@@ -6,7 +6,6 @@ and dual API endpoints (POST /api/chat and POST /api/v1/chat).
 
 import time
 import uuid
-import asyncio
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
@@ -25,25 +24,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger("bis_saathi.main")
 
-async def _prewarm_vectorstore():
-    """Background task: initialise ChromaDB after the server is already up."""
-    try:
-        from app.core.vectorstore import get_vectorstore
-        vs = get_vectorstore()
-        logger.info(f"ChromaDB ready with {vs.collection.count()} verified BIS chunks.")
-    except Exception as e:
-        logger.warning(f"ChromaDB pre-warm notice: {e}")
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifecycle startup and shutdown events."""
     logger.info(f"Starting {settings.PROJECT_NAME} v{settings.VERSION} [{settings.ENVIRONMENT}]...")
-
-    # Fire-and-forget: pre-warm runs AFTER the port is bound so Render doesn't
-    # time-out waiting for the server to become ready.
-    asyncio.create_task(_prewarm_vectorstore())
-
+    # ChromaDB index is pre-committed — no seeding or model loading at startup.
+    # Vectorstore and embeddings are lazy-loaded on the first request.
     yield
     logger.info("BIS Saathi backend shutting down cleanly.")
 

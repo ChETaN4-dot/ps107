@@ -54,7 +54,6 @@ frontend/CLAUDE.md
 logs/
 *.log
 data/logs/
-data/chroma_db/
 .tempmediaStorage/
 
 # Operating System & Editor Files

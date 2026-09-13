@@ -1492,11 +1492,11 @@ export default function Home() {
 
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-xl font-black bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent tracking-tight">{t.bisTitle}</span>
-                  <span className="text-slate-400 text-sm font-normal">|</span>
-                  <span className="text-lg font-extrabold text-[#FF6B00] dark:text-[#FFA800]">{t.bisHindiTitle}</span>
+                  <span className="text-base sm:text-xl font-black bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent tracking-tight">{t.bisTitle}</span>
+                  <span className="hidden sm:inline text-slate-400 text-sm font-normal">|</span>
+                  <span className="hidden sm:inline text-lg font-extrabold text-[#FF6B00] dark:text-[#FFA800]">{t.bisHindiTitle}</span>
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                <div className="hidden sm:flex text-xs text-slate-500 dark:text-slate-400 items-center space-x-1.5">
                   <span className="font-semibold text-slate-700 dark:text-slate-300">Bureau of Indian Standards</span>
                   <span>•</span>
                   <span className="italic font-serif text-orange-600 dark:text-orange-400 font-bold">{t.bisMotto}</span>
@@ -1557,9 +1557,9 @@ export default function Home() {
           </nav>
 
           {/* Right Controls: Persona, Language, Theme */}
-          <div className="flex items-center space-x-2">
-            {/* Click-driven Persona dropdown */}
-            <div className="relative" ref={personaDropdownRef}>
+          <div className="flex items-center space-x-1.5 sm:space-x-2">
+            {/* Click-driven Persona dropdown — hidden on mobile */}
+            <div className="relative hidden sm:block" ref={personaDropdownRef}>
               <button
                 type="button"
                 onClick={() => {
@@ -1611,8 +1611,8 @@ export default function Home() {
               )}
             </div>
 
-            {/* Click-driven 11-Language Selector (including Hinglish) */}
-            <div className="relative" ref={languageDropdownRef}>
+            {/* Click-driven 11-Language Selector — hidden on mobile */}
+            <div className="relative hidden sm:block" ref={languageDropdownRef}>
               <button
                 type="button"
                 onClick={() => {
@@ -1701,7 +1701,13 @@ export default function Home() {
 
         {/* ── LEFT SIDEBAR: NEW CHAT & CONSULTATION HISTORY (Midnight Royal Slate) ─────────── */}
         {sidebarOpen && (
-          <aside className="w-64 sm:w-72 bg-gradient-to-b from-[#0A101D] via-[#0F172A] to-[#070B14] text-slate-100 border-r border-slate-800/80 flex flex-col flex-shrink-0 p-3.5 space-y-3.5 shadow-2xl h-full max-h-full min-h-0 overflow-y-auto sidebar-scroll">
+          <>
+            {/* Mobile backdrop overlay */}
+            <div
+              className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+              onClick={() => setSidebarOpen(false)}
+            />
+          <aside className="fixed md:relative inset-y-0 left-0 z-50 md:z-auto w-72 md:w-64 lg:w-72 bg-gradient-to-b from-[#0A101D] via-[#0F172A] to-[#070B14] text-slate-100 border-r border-slate-800/80 flex flex-col flex-shrink-0 p-3.5 space-y-3.5 shadow-2xl h-full max-h-full min-h-0 overflow-y-auto sidebar-scroll">
             {/* New Chat Button (Vibrant Saffron Shimmer + Interactive Hover) */}
             <button
               onClick={startNewChat}
@@ -1855,6 +1861,7 @@ export default function Home() {
               </div>
             </div>
           </aside>
+          </>
         )}
 
         {/* ── MAIN CONTENT AREA ─────────────────────────────────────── */}
@@ -1864,7 +1871,7 @@ export default function Home() {
           {mode === "ask_bis" && (
             <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
               {/* Chat Feed */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scroll">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 md:pb-6 space-y-4 custom-scroll">
                 {/* Dynamic Chat History Translation Banner */}
                 {isTranslatingHistory && (
                   <div className="max-w-3xl mx-auto flex items-center justify-center py-2.5 px-4 bg-[#FF7A00]/10 border border-[#FF7A00]/30 rounded-xl text-xs font-bold text-[#FF7A00] space-x-2 animate-pulse shadow-2xs">
@@ -2615,6 +2622,49 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* ================= MOBILE BOTTOM NAVIGATION BAR (md:hidden) ================= */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-[#0B101D]/98 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 flex shadow-2xl">
+        <button
+          onClick={() => setMode("ask_bis")}
+          className={`flex-1 flex flex-col items-center py-2.5 gap-0.5 transition-all ${mode === "ask_bis" ? "text-[#FF6B00]" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          <span className="material-symbols-outlined text-[22px]">smart_toy</span>
+          <span className="text-[9px] font-bold">Ask BIS</span>
+          {mode === "ask_bis" && <span className="w-4 h-0.5 rounded-full bg-[#FF6B00]" />}
+        </button>
+        <button
+          onClick={() => setMode("find_my_standard")}
+          className={`flex-1 flex flex-col items-center py-2.5 gap-0.5 transition-all ${mode === "find_my_standard" ? "text-[#2563EB]" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          <span className="material-symbols-outlined text-[22px]">rule</span>
+          <span className="text-[9px] font-bold">Standards</span>
+          {mode === "find_my_standard" && <span className="w-4 h-0.5 rounded-full bg-[#2563EB]" />}
+        </button>
+        <button
+          onClick={() => setMode("laboratories")}
+          className={`flex-1 flex flex-col items-center py-2.5 gap-0.5 transition-all ${mode === "laboratories" ? "text-[#10B981]" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          <span className="material-symbols-outlined text-[22px]">biotech</span>
+          <span className="text-[9px] font-bold">Labs</span>
+          {mode === "laboratories" && <span className="w-4 h-0.5 rounded-full bg-[#10B981]" />}
+        </button>
+        <button
+          onClick={() => setMode("verify_marks")}
+          className={`flex-1 flex flex-col items-center py-2.5 gap-0.5 transition-all ${mode === "verify_marks" ? "text-[#8B5CF6]" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          <span className="material-symbols-outlined text-[22px]">verified</span>
+          <span className="text-[9px] font-bold">Verify</span>
+          {mode === "verify_marks" && <span className="w-4 h-0.5 rounded-full bg-[#8B5CF6]" />}
+        </button>
+        <button
+          onClick={toggleDarkMode}
+          className="flex-1 flex flex-col items-center py-2.5 gap-0.5 text-slate-400 dark:text-slate-500 transition-all"
+        >
+          <span className="material-symbols-outlined text-[22px]">{darkMode ? "light_mode" : "dark_mode"}</span>
+          <span className="text-[9px] font-bold">Theme</span>
+        </button>
+      </nav>
     </div>
   );
 }

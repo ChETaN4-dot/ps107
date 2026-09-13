@@ -4,8 +4,14 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // @ts-expect-error Next.js 16 option
-  agentRules: false,
+  async rewrites() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: "https://bis-saathi.onrender.com/api/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

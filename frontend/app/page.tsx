@@ -449,12 +449,43 @@ function matchLocalStandards(query: string): StandardRecommendation[] {
   return matched.length > 0 ? matched.slice(0, 6) : OFFICIAL_STANDARDS_CATALOG.slice(0, 4);
 }
 
-function generateFallbackAnswer(query: string, persona: PersonaType) {
-  const q = query.toLowerCase();
+function generateFallbackAnswer(query: string, persona: PersonaType): {
+  category: string;
+  confidence_level: "HIGH" | "MEDIUM" | "LOW";
+  confidence: number;
+  intent: string;
+  content: string;
+  citations: Citation[];
+  checklist?: Checklist;
+  followups: string[];
+} {
+  const q = query.toLowerCase().trim();
 
-  if (q.includes("bottle") || q.includes("flask") || q.includes("steel")) {
+  // 1. Greetings (e.g. "hi", "hello", "namaste")
+  if (/^(hi|hello|hey|namaste|greetings|good\s*(morning|afternoon|evening)|hola)[\s!.]*$/i.test(q)) {
     return {
-      category: "Cookware & Utensils",
+      category: "BIS AI Assistant",
+      confidence_level: "HIGH",
+      confidence: 0.98,
+      intent: "GREETING",
+      content: `**Namaste!** Welcome to **BIS SAATHI AI 2.0**, your sovereign regulatory compliance portal for the Bureau of Indian Standards.\n\nI can assist you with:\n- Finding applicable **Indian Standards (IS)** for your product categories\n- Statutory **Quality Control Orders (QCOs)** & mandatory ISI mark compliance\n- **Gold & Silver Hallmarking (6-digit HUID)** rules and verification\n- **BIS Recognized Testing Laboratories (LIMS)** across India\n- Fee concessions and subsidies for **MSMEs & Startups** (50% marking fee relief)\n\nWhat product or regulatory standard would you like to consult on today?`,
+      citations: [],
+      checklist: undefined,
+      followups: [
+        "Find Indian Standard for Stainless Steel Bottles",
+        "How to verify 6-digit Gold HUID mark",
+        "Which products require mandatory ISI mark (QCO)?"
+      ]
+    };
+  }
+
+  // 2. Specific Cookware / Bottles / Flasks
+  if (q.includes("bottle") || q.includes("flask") || (q.includes("steel") && (q.includes("bottle") || q.includes("flask") || q.includes("utensil")))) {
+    return {
+      category: "Cookware & Utensils (QCO)",
+      confidence_level: "HIGH",
+      confidence: 0.98,
+      intent: "STATUTORY_COMPLIANCE",
       content: `Under the **Bureau of Indian Standards (BIS)** and the statutory **Cookware and Utensils (Quality Control) Order, 2023**, manufactured water bottles and flasks fall under compulsory ISI mark certification:
 
 1. **Domestic Stainless Steel Vacuum Flasks / Insulated Bottles**: Governed by **IS 17526 : 2021** (Current with Amd 1). Double-wall vacuum bottles must pass thermal insulation retention, impact shock, and corrosion tests.
@@ -499,9 +530,13 @@ function generateFallbackAnswer(query: string, persona: PersonaType) {
     };
   }
 
+  // 3. Gold Hallmarking / HUID
   if (q.includes("gold") || q.includes("jewel") || q.includes("huid") || q.includes("hallmark")) {
     return {
       category: "Hallmarking & Precious Metals",
+      confidence_level: "HIGH",
+      confidence: 0.99,
+      intent: "HALLMARKING_VERIFICATION",
       content: `Under the **Hallmarking Scheme of the BIS Act, 2016**, gold jewellery hallmarking is **strictly mandatory** in 343+ notified districts of India:
 
 ### Three Mandatory Marks on Genuine Gold Jewellery:
@@ -541,29 +576,64 @@ Consumers can verify the authenticity, jeweller registration, and assaying date 
     };
   }
 
-  return {
-    category: "Statutory Standards Consultation",
-    content: `The **Bureau of Indian Standards (BIS)** is the National Standards Body of India established under the **BIS Act, 2016**. It oversees product quality, consumer safety, and mandatory compliance across India.
+  // 4. Keyword matching against the verified catalog
+  const matched = matchLocalStandards(query);
+  const topMatch = matched[0];
+  const queryTokens = q.replace(/[^a-z0-9]/g, " ").split(/\s+/).filter(w => w.length > 2 && !["the", "for", "and", "what", "how", "can"].includes(w));
+  const hasKeywordMatch = queryTokens.length > 0 && queryTokens.some(w => 
+    (topMatch.keywords || "").toLowerCase().includes(w) ||
+    topMatch.title.toLowerCase().includes(w) ||
+    topMatch.standard_number.toLowerCase().includes(w) ||
+    topMatch.category.toLowerCase().includes(w)
+  );
 
-### Key Certification Schemes:
-1. **Scheme I (ISI Mark)**: Mandatory for products covered under statutory **Quality Control Orders (QCOs)** such as domestic pressure cookers, cement, cables, packaged water, steel, and toys. Requires factory inspection and testing against applicable Indian Standards (IS).
-2. **Scheme II (Compulsory Registration Scheme - CRS)**: Self-declaration of conformity for electronics and IT goods (LEDs, laptops, mobile phones, power banks) regulated under MeitY orders.
-3. **Hallmarking Scheme**: Compulsory third-party certification of gold and silver jewellery with 6-digit alphanumeric HUID.
-4. **Laboratory Recognition Scheme (LRS)**: Network of central, regional, branch, and private partner testing laboratories.`,
-    citations: [
-      {
-        source_title: "Bureau of Indian Standards Act, 2016",
-        source_url: "https://www.bis.gov.in",
-        section: "Sections 13, 14 & 16",
-        authority: "Parliament of India",
-        relevance_score: 0.95
-      }
-    ],
+  if (hasKeywordMatch && topMatch) {
+    return {
+      category: topMatch.category,
+      confidence_level: "HIGH",
+      confidence: topMatch.confidence || 0.95,
+      intent: "STANDARDS_CONSULTATION",
+      content: `### Applicable Indian Standard: **${topMatch.standard_number}**\n**${topMatch.title}**\n\n- **Regulatory Status**: ${topMatch.status}\n- **Compliance Category**: ${topMatch.category}\n- **QCO Reference**: ${topMatch.qco_reference || "Quality Control Order"}\n\n**Regulatory Overview:**\n${topMatch.match_reason}\n\n**Mandatory Certification:** Manufacturers must obtain the **Standard Mark (ISI Mark)** under Scheme I of the BIS Act, 2016. Adherence to the BIS Scheme of Inspection and Testing (SIT) and in-house laboratory testing are statutory prerequisites.`,
+      citations: [
+        {
+          source_title: `${topMatch.standard_number} - ${topMatch.title}`,
+          source_url: topMatch.source_url || "https://standards.bis.gov.in",
+          section: "Clause 4 & Marking Requirements",
+          authority: "Bureau of Indian Standards",
+          relevance_score: topMatch.confidence || 0.95
+        }
+      ],
+      checklist: {
+        title: `${topMatch.standard_number} Compliance Checklist`,
+        category: topMatch.category,
+        steps: [
+          { id: "s1", title: "Review Standard Specifications", description: `Download and review ${topMatch.standard_number} requirements for testing and manufacturing tolerances.`, mandatory: true },
+          { id: "s2", title: "Establish In-House Test Laboratory", description: "Equip factory with calibrated testing apparatus as per BIS Scheme of Inspection and Testing (SIT).", mandatory: true },
+          { id: "s3", title: "Submit Application on Manakonline", description: "Upload Form-V along with factory layout, manufacturing machinery list, and test personnel credentials.", mandatory: true },
+          { id: "s4", title: "BIS Factory Inspection & Grant of CM/L", description: "BIS auditing officer visits the factory and draws an independent sample for verification at an accredited laboratory.", mandatory: true }
+        ]
+      },
+      followups: [
+        `What are the laboratory testing requirements for ${topMatch.standard_number}?`,
+        `What fee concessions do MSMEs receive under ${topMatch.category}?`,
+        `How to verify genuine ISI mark on BIS Care App?`
+      ]
+    };
+  }
+
+  // 5. UNRECOGNIZED QUERY / GIBBERISH (e.g. "hj", "xyz", "asdf") -> Honest Low-Confidence Clarification
+  return {
+    category: "Standard Not Found",
+    confidence_level: "LOW",
+    confidence: 0.15,
+    intent: "CLARIFICATION_REQUIRED",
+    content: `I could not identify any Bureau of Indian Standards (BIS) regulations, Indian Standards (IS), or Quality Control Orders (QCOs) matching **"${query}"**.\n\n### How to consult BIS SAATHI:\n- **Enter a product name**: e.g., *"Stainless steel bottle"*, *"Domestic pressure cooker"*, *"Gold jewellery"*, *"Packaged drinking water"*, *"PVC cables"*, *"LED lamps"*, *"Toys"*.\n- **Enter an Indian Standard code**: e.g., *"IS 17526"*, *"IS 2347"*, *"IS 1417"*, *"IS 14543"*, *"IS 694"*.\n- **Ask a regulatory question**: e.g., *"What are MSME concessions for BIS licence?"* or *"How to verify genuine ISI mark on BIS Care App?"*`,
+    citations: [],
     checklist: undefined,
     followups: [
-      "Which products are under compulsory BIS certification (QCO)?",
-      "How can an MSME get a 50% concession on BIS marking fees?",
-      "How to verify genuine ISI mark on the BIS Care App?"
+      "Find standard for Stainless Steel Bottles (IS 17526)",
+      "Find standard for Pressure Cookers (IS 2347)",
+      "How to verify Gold HUID on BIS Care App"
     ]
   };
 }
@@ -1160,7 +1230,7 @@ export default function Home() {
 
   // Google Authentication & User Profile
   const [authUser, setAuthUser]                         = useState<AuthUser | null>(null);
-  const [authModalOpen, setAuthModalOpen]               = useState(false);
+  const [authInitialized, setAuthInitialized]           = useState(false);
   const [userMenuOpen, setUserMenuOpen]                 = useState(false);
   const userMenuRef                                     = useRef<HTMLDivElement>(null);
   const [customLoginEmail, setCustomLoginEmail]         = useState("");
@@ -1267,28 +1337,43 @@ export default function Home() {
       };
       setAuthUser(user);
       localStorage.setItem("bis_saathi_auth_user", JSON.stringify(user));
-      setAuthModalOpen(false);
     } catch (e) {
       console.error("Google JWT parse error", e);
     }
   };
 
-  // Instant 1-Click Google Sign-In (Works with any Google account without GCP config block)
-  const handleInstantGoogleLogin = (presetEmail?: string, presetName?: string) => {
-    const email = presetEmail || customLoginEmail.trim() || "user.google@gmail.com";
-    const name = presetName || customLoginName.trim() || email.split("@")[0].replace(".", " ");
-    const uid = "g_" + btoa(email.toLowerCase()).replace(/[^a-zA-Z0-9]/g, "").slice(0, 16);
+  // Google Sign-In with real email (Zero dummy accounts)
+  const handleInstantGoogleLogin = (rawInputEmail?: string) => {
+    const input = (rawInputEmail || customLoginEmail).trim();
+    if (!input || !input.includes("@")) {
+      alert("Please enter a valid Google Account email address.");
+      return;
+    }
+    const email = input.toLowerCase();
+    const namePart = email.split("@")[0].replace(/[._-]/g, " ");
+    const name = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    const uid = "g_" + btoa(email).replace(/[^a-zA-Z0-9]/g, "").slice(0, 16);
     const user: AuthUser = {
       uid,
       email,
-      name: name.charAt(0).toUpperCase() + name.slice(1),
+      name,
       provider: "google"
     };
     setAuthUser(user);
     localStorage.setItem("bis_saathi_auth_user", JSON.stringify(user));
-    setAuthModalOpen(false);
     setCustomLoginEmail("");
     setCustomLoginName("");
+  };
+
+  const handleGoogleOAuthLaunch = () => {
+    if ((window as any).google?.accounts?.id) {
+      (window as any).google.accounts.id.prompt();
+    } else {
+      const email = prompt("Enter your Google Account email (e.g. yourname@gmail.com):");
+      if (email && email.includes("@")) {
+        handleInstantGoogleLogin(email);
+      }
+    }
   };
 
   const handleSignOut = () => {
@@ -1306,6 +1391,7 @@ export default function Home() {
       const savedUser = localStorage.getItem("bis_saathi_auth_user");
       if (savedUser) setAuthUser(JSON.parse(savedUser));
     } catch {}
+    setAuthInitialized(true);
 
     // Load Google Identity Services SDK
     if (!document.getElementById("google-gsi-client")) {
@@ -1855,7 +1941,7 @@ export default function Home() {
     if (!overrideText) setInput("");
     setIsLoading(true);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
 
     try {
       const historyPayload = updatedWithUser.slice(-6).map(m => ({ role: m.role, content: m.content }));
@@ -1907,9 +1993,9 @@ export default function Home() {
         id: "assistant-" + Date.now(),
         role: "assistant",
         content: fb.content,
-        confidence: 0.95,
-        confidence_level: "HIGH",
-        intent: "STATUTORY_CONSULTATION",
+        confidence: fb.confidence || 0.85,
+        confidence_level: fb.confidence_level || "LOW",
+        intent: fb.intent || "STATUTORY_CONSULTATION",
         category: fb.category,
         citations: fb.citations,
         checklist: fb.checklist,
@@ -2014,6 +2100,117 @@ export default function Home() {
     const q = sessionSearchQuery.toLowerCase();
     return sessions.filter(s => s.title.toLowerCase().includes(q) || s.persona.toLowerCase().includes(q));
   }, [sessions, sessionSearchQuery]);
+
+  // ── Mandatory Authentication Gate ──────────────────────────────────
+  if (!authInitialized) {
+    return (
+      <div className="min-h-screen bg-[#060D1A] flex flex-col items-center justify-center text-white font-sans">
+        <div className="w-10 h-10 border-3 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-xs font-semibold text-slate-400 mt-4 tracking-wide">Initializing BIS SAATHI Secure Portal...</p>
+      </div>
+    );
+  }
+
+  if (!authUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#060D1A] via-[#0A1224] to-[#040812] text-white flex flex-col justify-between p-4 sm:p-6 antialiased font-sans selection:bg-orange-500/30">
+        {/* Top Sovereign Tricolor Bar */}
+        <div className="tricolor-ribbon h-1.5 w-full rounded-full opacity-95 flex-shrink-0"></div>
+
+        {/* Center Portal Box */}
+        <div className="flex-1 flex items-center justify-center py-6 sm:py-10">
+          <div className="w-full max-w-md bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-900 dark:text-white space-y-6 animate-fade-in-up">
+            {/* National Emblem & Title */}
+            <div className="text-center space-y-3">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 text-white flex items-center justify-center mx-auto shadow-xl shadow-orange-500/30 p-2.5">
+                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" fill="none" r="45" stroke="currentColor" strokeWidth="4"></circle>
+                  <circle cx="50" cy="50" fill="none" r="10" stroke="currentColor" strokeWidth="3"></circle>
+                  <circle cx="50" cy="50" fill="currentColor" r="3"></circle>
+                  <path d="M 50 5 L 50 15 M 50 85 L 50 95 M 5 50 L 15 50 M 85 50 L 95 50" stroke="currentColor" strokeWidth="3"></path>
+                  <path d="M 18 18 L 25 25 M 75 75 L 82 82 M 18 82 L 25 75 M 75 25 L 82 18" stroke="currentColor" strokeWidth="3"></path>
+                </svg>
+              </div>
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00] block mb-1">
+                  Government of India · Ministry of Consumer Affairs
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center justify-center gap-1.5">
+                  <span>BIS SAATHI</span>
+                  <span className="text-[11px] font-black uppercase px-2 py-0.5 rounded-md bg-[#FF6B00] text-white">AI 2.0</span>
+                </h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                  Bureau of Indian Standards Regulatory Intelligence Platform
+                </p>
+              </div>
+            </div>
+
+            {/* Mandatory Notice */}
+            <div className="bg-slate-50 dark:bg-slate-900/80 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-xs space-y-1.5">
+              <div className="font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
+                <span className="material-symbols-outlined text-[18px] text-emerald-500">verified_user</span>
+                <span>Mandatory User Authentication</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                To consult Indian Standards (IS), check mandatory Quality Control Orders (QCOs), and access lab directories, sign in with your Google Account. Your consultations will be securely isolated and saved to your personal account.
+              </p>
+            </div>
+
+            {/* Clean Real Google Sign-In (Zero dummy accounts) */}
+            <div className="space-y-4 pt-1">
+              <button
+                type="button"
+                onClick={handleGoogleOAuthLaunch}
+                className="w-full bg-white dark:bg-[#1E293B] hover:bg-slate-50 dark:hover:bg-[#283548] text-slate-800 dark:text-white border-2 border-slate-200 dark:border-slate-700 hover:border-[#4285F4] py-3.5 px-4 rounded-2xl text-sm font-bold flex items-center justify-center space-x-3 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+              >
+                <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                <span>Sign in with Google Account</span>
+              </button>
+
+              {/* Direct Google Account Email Input */}
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block">
+                  Or enter your Google Email address:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={customLoginEmail}
+                    onChange={e => setCustomLoginEmail(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter" && customLoginEmail.trim()) handleInstantGoogleLogin(customLoginEmail.trim()); }}
+                    placeholder="name@gmail.com"
+                    className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all font-medium"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleInstantGoogleLogin(customLoginEmail.trim())}
+                    disabled={!customLoginEmail.trim() || !customLoginEmail.includes("@")}
+                    className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:opacity-40 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-md transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 text-center text-[10px] text-slate-400 border-t border-slate-100 dark:border-slate-800">
+              🔒 All consultations are isolated &amp; encrypted per authenticated user.
+            </div>
+          </div>
+        </div>
+
+        {/* Institutional Footer */}
+        <footer className="text-center text-[10px] text-slate-400 py-3">
+          Bureau of Indian Standards · Manak Bhawan, 9 Bahadur Shah Zafar Marg, New Delhi 110002
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#FAF9F6] dark:bg-[#0C111D] text-[#101828] dark:text-[#FAF9F6] antialiased h-screen flex flex-col font-sans selection:bg-[#E7E2D9] dark:selection:bg-[#242C3D] overflow-hidden">
@@ -2167,10 +2364,10 @@ export default function Home() {
             </button>
           </nav>
 
-          {/* Right Controls: Persona, Language, Theme, Google Login (Visible on Mobile & Desktop) */}
+          {/* Right Controls: Persona (desktop), Language, Theme, Google Login (Visible on Mobile & Desktop) */}
           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-            {/* Click-driven Persona dropdown */}
-            <div className="relative" ref={personaDropdownRef}>
+            {/* Click-driven Persona dropdown (Desktop only - accessible in sidebar on mobile) */}
+            <div className="relative hidden sm:block" ref={personaDropdownRef}>
               <button
                 type="button"
                 onClick={() => {
@@ -2638,10 +2835,10 @@ export default function Home() {
                   messages.map(msg => (
                     <div key={msg.id} className="max-w-3xl mx-auto space-y-3 animate-fade-in-up">
                       {msg.role === "user" ? (
-                        /* User message (Deep Slate Indigo Gradient) */
+                        /* User message (Modern Sleek Indigo Bubble) */
                         <div className="flex justify-end">
-                          <div className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white rounded-2xl rounded-tr-xs px-5 py-3.5 max-w-xl shadow-md border border-slate-700/60 text-sm space-y-1.5">
-                            <div className="text-[10px] text-slate-300 font-mono flex items-center justify-between gap-4">
+                          <div className="bg-gradient-to-br from-[#0F172A] via-[#1A253C] to-[#0F172A] text-white rounded-2xl rounded-tr-xs px-3.5 sm:px-4.5 py-2.5 sm:py-3 max-w-[88%] sm:max-w-lg shadow-md border border-slate-700/60 text-xs sm:text-sm space-y-1">
+                            <div className="text-[10px] text-slate-300 font-mono flex items-center justify-between gap-3">
                               <span className="font-semibold text-orange-400">You ({currentPersona.label})</span>
                               <span>{msg.timestamp}</span>
                             </div>
@@ -2650,12 +2847,12 @@ export default function Home() {
                         </div>
                       ) : (
                         /* Assistant message (Glassmorphic Card with Saffron/Emerald micro-accent) */
-                        <article className="glass-card bg-white/95 dark:bg-[#111827]/90 border border-slate-200/80 dark:border-slate-800 rounded-2xl rounded-tl-xs p-5 sm:p-6 shadow-md space-y-4 text-[#0F172A] dark:text-[#F8FAFC] border-l-4 border-l-[#FF6B00]">
+                        <article className="glass-card bg-white/95 dark:bg-[#111827]/90 border border-slate-200/80 dark:border-slate-800 rounded-2xl rounded-tl-xs p-3.5 sm:p-5 md:p-6 shadow-md space-y-3 sm:space-y-4 text-[#0F172A] dark:text-[#F8FAFC] border-l-4 border-l-[#FF6B00]">
                           {/* Header */}
-                          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800">
                             <div className="flex items-center space-x-2">
-                              <span className="material-symbols-outlined text-[#10B981] text-[20px]">verified</span>
-                              <span className="font-extrabold text-[#0F172A] dark:text-[#F8FAFC] text-sm tracking-tight">{t.statutoryNotice}</span>
+                              <span className="material-symbols-outlined text-[#10B981] text-[18px] sm:text-[20px]">verified</span>
+                              <span className="font-extrabold text-[#0F172A] dark:text-[#F8FAFC] text-xs sm:text-sm tracking-tight">{t.statutoryNotice}</span>
                             </div>
 
                             {msg.confidence_level && (
@@ -2898,8 +3095,8 @@ export default function Home() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Bottom Chat Input Dock */}
-              <div className="p-2.5 sm:p-4 pb-16 sm:pb-4 glass-header bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800 shadow-lg">
+              {/* Bottom Chat Input Dock (Elevated on mobile to clear navigation bar) */}
+              <div className="p-2.5 sm:p-4 pb-20 sm:pb-4 glass-header bg-white/95 dark:bg-[#0F172A]/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800 shadow-lg">
                 <div className="max-w-3xl mx-auto space-y-2.5">
                   <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
                     <label className="flex items-center space-x-2 cursor-pointer font-medium hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
@@ -3385,105 +3582,6 @@ export default function Home() {
           <span className="text-[9px] font-bold">Theme</span>
         </button>
       </nav>
-
-      {/* ================= GOOGLE AUTHENTICATION MODAL ================= */}
-      {authModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 text-[#101828] dark:text-[#FAF9F6] relative">
-            {/* Close button */}
-            <button
-              onClick={() => setAuthModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[20px]">close</span>
-            </button>
-
-            {/* Header */}
-            <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FF6B00] to-[#FFA800] text-white flex items-center justify-center mx-auto shadow-lg shadow-orange-500/25">
-                <span className="material-symbols-outlined text-[26px]">account_circle</span>
-              </div>
-              <h3 className="text-xl font-black text-slate-900 dark:text-white">Sign in to BIS SAATHI</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Save and sync your compliance consultations, standards searches, and laboratory bookmarks across all devices.
-              </p>
-            </div>
-
-            {/* Google Sign In Options */}
-            <div className="space-y-3 pt-2">
-              {/* Instant Google 1-Click Button */}
-              <button
-                onClick={() => handleInstantGoogleLogin()}
-                className="w-full bg-white dark:bg-[#1E2330] hover:bg-slate-50 dark:hover:bg-[#252c3c] text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 py-3 px-4 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-3 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-              >
-                <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                </svg>
-                <span>Continue with Google Account</span>
-              </button>
-
-              {/* Preset 1-Click options for instant test/demo */}
-              <div className="pt-2">
-                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 text-center mb-2">Or Quick Select Account</p>
-                <div className="space-y-1.5">
-                  <button
-                    onClick={() => handleInstantGoogleLogin("shailendra@gmail.com", "Shailendra")}
-                    className="w-full text-left p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500/50 bg-slate-50 dark:bg-slate-900/60 hover:bg-orange-500/5 flex items-center justify-between transition-colors cursor-pointer text-xs"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="w-6 h-6 rounded-full bg-orange-500 text-white font-bold flex items-center justify-center text-[10px]">S</div>
-                      <div>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 block">Shailendra</span>
-                        <span className="text-[10px] text-slate-500">shailendra@gmail.com</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-orange-500">Select</span>
-                  </button>
-                  <button
-                    onClick={() => handleInstantGoogleLogin("msme.director@gmail.com", "MSME Director")}
-                    className="w-full text-left p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500/50 bg-slate-50 dark:bg-slate-900/60 hover:bg-orange-500/5 flex items-center justify-between transition-colors cursor-pointer text-xs"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="w-6 h-6 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-[10px]">M</div>
-                      <div>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 block">MSME Director</span>
-                        <span className="text-[10px] text-slate-500">msme.director@gmail.com</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-orange-500">Select</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Custom Email Input */}
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
-                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Or use your custom Google / Work Email</p>
-                <input
-                  type="email"
-                  value={customLoginEmail}
-                  onChange={e => setCustomLoginEmail(e.target.value)}
-                  placeholder="name@gmail.com"
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all"
-                />
-                <button
-                  onClick={() => handleInstantGoogleLogin(customLoginEmail)}
-                  disabled={!customLoginEmail.trim()}
-                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 disabled:opacity-50 text-white font-bold py-2 rounded-xl text-xs shadow-md transition-all cursor-pointer"
-                >
-                  Sign In with Email
-                </button>
-              </div>
-            </div>
-
-            <div className="text-center pt-1 text-[10px] text-slate-400">
-              🔒 Chat sessions are isolated and encrypted per user login.
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

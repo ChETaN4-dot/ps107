@@ -1777,9 +1777,56 @@ export default function Home() {
             setMessages(data.sessions[0].messages);
             setPersona(data.sessions[0].persona || "msme");
             setLanguage(data.sessions[0].language || "en");
+          } else if (hasLoadedLocal) {
+            // Cloud has 0 sessions but this device has local chats: auto-sync local chats up to cloud database
+            try {
+              const localSaved = localStorage.getItem(key);
+              if (localSaved) {
+                const localList: ChatSession[] = JSON.parse(localSaved);
+                localList.forEach(s => {
+                  fetch(`${API_BASE}/api/v1/user/chats`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      user_id: userIdent,
+                      session_id: s.id,
+                      title: s.title,
+                      persona: s.persona,
+                      language: s.language,
+                      messages: s.messages,
+                      updated_at: s.updatedAt
+                    })
+                  }).catch(() => {});
+                });
+              }
+            } catch {}
           }
         })
-        .catch(err => console.warn("Cloud chat sync warning:", err));
+        .catch(err => {
+          console.warn("Cloud chat sync warning:", err);
+          // On network error or cold start, still attempt uploading local sessions to ensure persistence
+          try {
+            const localSaved = localStorage.getItem(key);
+            if (localSaved) {
+              const localList: ChatSession[] = JSON.parse(localSaved);
+              localList.forEach(s => {
+                fetch(`${API_BASE}/api/v1/user/chats`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    user_id: userIdent,
+                    session_id: s.id,
+                    title: s.title,
+                    persona: s.persona,
+                    language: s.language,
+                    messages: s.messages,
+                    updated_at: s.updatedAt
+                  })
+                }).catch(() => {});
+              });
+            }
+          } catch {}
+        });
     }
   }, [authUser]);
 

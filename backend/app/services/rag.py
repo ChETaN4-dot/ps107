@@ -605,11 +605,13 @@ class RAGService:
             "   e. Process Steps: When procedural guidance is requested, format as numbered bold steps (1., 2., 3.).\n"
             "   f. What You Can Do Next: End with 2-3 concise, actionable next steps.\n"
             "7. Do NOT dump source URLs or chunk IDs into the main prose (citations are handled separately in citation cards).\n"
-            f"8. Language Requirement: Respond in fluent, natural {target_lang_str} while preserving statutory designations ('IS 14543', 'IS 17803:2022', 'IS 1417:2016', 'HUID', 'CML', 'QCO', 'Option 1', 'Option 2', and official BIS portal URLs) unchanged.\n\n"
+            f"8. MANDATORY OUTPUT LANGUAGE: You MUST generate your response exclusively in {target_lang_str}. "
+            f"If {target_lang_str} is Hindi (हिन्दी), every explanation and heading MUST be written in natural Hindi in Devanagari script. Do NOT respond in English. "
+            "Preserve only technical standard numbers ('IS 14543', 'IS 17803:2022', 'IS 17526'), 'HUID', 'CML', 'QCO', 'Option 1', 'Option 2', and official BIS portal URLs unchanged.\n\n"
             f"[OFFICIAL BIS CONTEXT]\n{combined_context}"
         )
 
-        user_prompt = f"[USER PERSONA]: {persona.value}\n[TARGET LANGUAGE]: {target_lang_str}\n[USER QUERY]: {raw_user_msg}"
+        user_prompt = f"[USER PERSONA]: {persona.value}\n[REQUIRED RESPONSE LANGUAGE]: {target_lang_str} (MANDATORY)\n[USER QUERY]: {raw_user_msg}"
 
         # 8. LLM Generation
         generated_answer = self.llm.generate(system_prompt, user_prompt)

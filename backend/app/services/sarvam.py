@@ -117,7 +117,7 @@ class SarvamMultilingualService:
         Translates non-English user queries into English for hybrid retrieval against
         the verified BIS knowledge base, while preserving product codes and standard numbers.
         """
-        if user_lang == LanguageType.EN or not self.is_configured():
+        if user_lang == LanguageType.EN or not self.is_configured() or query.isascii():
             return query
 
         src_code = SARVAM_LANGUAGE_MAP.get(user_lang, "hi-IN")
@@ -148,6 +148,24 @@ class SarvamMultilingualService:
         Returns (translated_text, multilingual_notice).
         """
         if target_lang == LanguageType.EN:
+            return text, None
+
+        # Check if text is already in the target language script
+        if target_lang in [LanguageType.HI, LanguageType.HINGLISH, LanguageType.MR] and re.search(r"[\u0900-\u097F]", text):
+            return text, None
+        if target_lang == LanguageType.BN and re.search(r"[\u0980-\u09FF]", text):
+            return text, None
+        if target_lang == LanguageType.TA and re.search(r"[\u0B80-\u0BFF]", text):
+            return text, None
+        if target_lang == LanguageType.TE and re.search(r"[\u0C00-\u0C7F]", text):
+            return text, None
+        if target_lang == LanguageType.GU and re.search(r"[\u0A80-\u0AFF]", text):
+            return text, None
+        if target_lang == LanguageType.KN and re.search(r"[\u0C80-\u0CFF]", text):
+            return text, None
+        if target_lang == LanguageType.ML and re.search(r"[\u0D00-\u0D7F]", text):
+            return text, None
+        if target_lang == LanguageType.PA and re.search(r"[\u0A00-\u0A7F]", text):
             return text, None
 
         if not self.is_configured():
@@ -266,7 +284,18 @@ class SarvamMultilingualService:
         """Translates an entire list of chat conversation messages into the target language."""
         if not messages:
             return []
-        
+
+        # 1. Try fast batch LLM translation via Groq (single call, <1s, high quality)
+        try:
+            from app.core.llm import get_llm_service
+            llm = get_llm_service()
+            fast_res = llm.translate_messages_fast(messages, target_lang, source_lang)
+            if fast_res:
+                return fast_res
+        except Exception as e:
+            logger.debug(f"Fast LLM batch translation bypassed: {e}")
+
+        # 2. Fallback to Sarvam message-by-message translation
         translated_list: List[TranslateMessageItem] = []
         for msg in messages:
             tr_content = self.translate_text(msg.content, target_lang, source_lang)

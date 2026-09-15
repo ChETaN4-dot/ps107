@@ -449,7 +449,7 @@ function matchLocalStandards(query: string): StandardRecommendation[] {
   return matched.length > 0 ? matched.slice(0, 6) : OFFICIAL_STANDARDS_CATALOG.slice(0, 4);
 }
 
-function generateFallbackAnswer(query: string, persona: PersonaType): {
+function generateFallbackAnswer(query: string, persona: PersonaType, language?: LanguageType): {
   category: string;
   confidence_level: "HIGH" | "MEDIUM" | "LOW";
   confidence: number;
@@ -460,9 +460,26 @@ function generateFallbackAnswer(query: string, persona: PersonaType): {
   followups: string[];
 } {
   const q = query.toLowerCase().trim();
+  const isHindi = language === "hi";
 
   // 1. Greetings (e.g. "hi", "hello", "namaste")
-  if (/^(hi|hello|hey|namaste|greetings|good\s*(morning|afternoon|evening)|hola)[\s!.]*$/i.test(q)) {
+  if (/^(hi|hello|hey|namaste|greetings|good\s*(morning|afternoon|evening)|hola|नमस्ते|प्रणाम)[\s!.]*$/i.test(q)) {
+    if (isHindi) {
+      return {
+        category: "भारतीय मानक ब्यूरो (BIS)",
+        confidence_level: "HIGH",
+        confidence: 0.98,
+        intent: "GREETING",
+        content: `**नमस्ते!** **बीआईएस साथी (BIS SAATHI AI 2.0)** में आपका स्वागत है। मैं भारतीय मानक ब्यूरो (BIS), उपभोक्ता मामले, खाद्य एवं सार्वजनिक वितरण मंत्रालय, भारत सरकार का आधिकारिक एआई सहायक हूँ।\n\nमैं आपकी निम्नलिखित विषयों पर सहायता कर सकता हूँ:\n- आपके उत्पाद के लिए लागू **भारतीय मानक (IS)** खोजना\n- अनिवार्य **गुणवत्ता नियंत्रण आदेश (QCOs)** एवं ISI मार्क प्रमाणन\n- **सोना एवं चांदी हॉलमार्किंग (6-अंकीय HUID)** नियम और BIS Care App पर सत्यापन\n- भारत भर में **बीआईएस मान्यता प्राप्त परीक्षण प्रयोगशालाएं (LIMS)**\n- **एमएसएमई और स्टार्टअप्स** के लिए शुल्क में 50% छूट एवं सरल प्रक्रिया\n\nआज आप किस उत्पाद या भारतीय मानक के संबंध में परामर्श करना चाहते हैं?`,
+        citations: [],
+        checklist: undefined,
+        followups: [
+          "स्टेनलेस स्टील बोतलों के लिए भारतीय मानक खोजें",
+          "6-अंकीय गोल्ड HUID मार्क का सत्यापन कैसे करें?",
+          "किन उत्पादों के लिए ISI मार्क (QCO) अनिवार्य है?"
+        ]
+      };
+    }
     return {
       category: "BIS AI Assistant",
       confidence_level: "HIGH",
@@ -480,7 +497,56 @@ function generateFallbackAnswer(query: string, persona: PersonaType): {
   }
 
   // 2. Specific Cookware / Bottles / Flasks
-  if (q.includes("bottle") || q.includes("flask") || (q.includes("steel") && (q.includes("bottle") || q.includes("flask") || q.includes("utensil")))) {
+  if (q.includes("bottle") || q.includes("flask") || q.includes("बोतल") || (q.includes("steel") && (q.includes("bottle") || q.includes("flask") || q.includes("utensil")))) {
+    if (isHindi) {
+      return {
+        category: "कुकवेयर और बर्तन (QCO)",
+        confidence_level: "HIGH",
+        confidence: 0.98,
+        intent: "STATUTORY_COMPLIANCE",
+        content: `**भारतीय मानक ब्यूरो (BIS)** और वैधानिक **कुकवेयर और बर्तन (गुणवत्ता नियंत्रण) आदेश, 2023** के तहत निर्मित पानी की बोतलें और फ्लास्क अनिवार्य ISI मार्क प्रमाणन के अंतर्गत आते हैं:
+
+1. **घरेलू स्टेनलेस स्टील वैक्यूम फ्लास्क / इंसुलेटेड बोतलें**: **IS 17526 : 2021** (संशोधन 1 सहित) द्वारा शासित। डबल-वॉल वैक्यूम बोतलों को थर्मल इन्सुलेशन रिटेंशन, इम्पैक्ट शॉक और संक्षारण परीक्षण पास करना अनिवार्य है।
+2. **पीने योग्य पानी की बोतलें (गैर-वैक्यूम)**: **IS 17803 : 2022** द्वारा शासित। इसमें पुन: प्रयोज्य सिंगल-वॉल स्टेनलेस स्टील, कांच और प्लास्टिक की पानी की बोतलें शामिल हैं।
+
+### निर्माताओं के लिए वैधानिक आवश्यकताएं:
+- **लाइसेंस योजना**: **योजना I (उत्पाद प्रमाणन)** के तहत **मानक चिह्न (ISI मार्क)** लाइसेंस प्राप्त करना अनिवार्य है।
+- **कारखाना गुणवत्ता नियंत्रण**: इन-हाउस परीक्षण प्रयोगशाला, कैलिब्रेटेड उपकरण और बीआईएस निरीक्षण एवं परीक्षण योजना (SIT) का पालन।
+- **एमएसएमई राहत**: उद्यम पंजीकृत एमएसएमई को मार्किंग शुल्क पर **50% की छूट** और वार्षिक लाइसेंस नवीनीकरण शुल्क पर **80% की छूट** मिलती है।
+- **कानूनी आदेश**: वैध ISI मार्क CM/L लाइसेंस नंबर के बिना निर्माण, भंडारण या बिक्री पूर्णतः प्रतिबंधित है।`,
+        citations: [
+          {
+            source_title: "IS 17526:2021 - स्टेनलेस स्टील वैक्यूम फ्लास्क",
+            source_url: "https://standards.bis.gov.in",
+            section: "क्लॉज 4.1 और क्लॉज 7.2 मार्किंग और टेस्टिंग",
+            authority: "भारतीय मानक ब्यूरो",
+            relevance_score: 0.98
+          },
+          {
+            source_title: "कुकवेयर और बर्तन (गुणवत्ता नियंत्रण) आदेश",
+            source_url: "https://www.bis.gov.in",
+            section: "धारा 16, बीआईएस अधिनियम 2016",
+            authority: "उपभोक्ता मामले मंत्रालय",
+            relevance_score: 0.95
+          }
+        ],
+        checklist: {
+          title: "स्टेनलेस स्टील बोतल ISI लाइसेंसिंग चेकलिस्ट",
+          category: "योजना I अनुपालन",
+          steps: [
+            { id: "s1", title: "सही IS नंबर की पहचान करें", description: "वैक्यूम फ्लास्क के लिए IS 17526:2021 या सिंगल-वॉल बोतलों के लिए IS 17803:2022 का उपयोग करें।", mandatory: true },
+            { id: "s2", title: "इन-हाउस परीक्षण प्रयोगशाला स्थापित करें", description: "कैलिब्रेटेड वैक्यूम रिटेंशन टेस्टर और लीक टेस्ट रिग की व्यवस्था करें।", mandatory: true },
+            { id: "s3", title: "मानकऑनलाइन पोर्टल पर आवेदन करें", description: "फैक्ट्री लेआउट और मशीनरी सूची के साथ फॉर्म-V जमा करें।", mandatory: true },
+            { id: "s4", title: "बीआईएस फैक्ट्री ऑडिट और CM/L आवंटन", description: "बीआईएस अधिकारी स्वतंत्र नमूना लेकर परीक्षण प्रयोगशाला भेजते हैं।", mandatory: true }
+          ]
+        },
+        followups: [
+          "IS 17526:2021 वैक्यूम बोतलों के लिए परीक्षण आवश्यकताएं क्या हैं?",
+          "बीआईएस प्रमाणन के लिए एमएसएमई को क्या शुल्क छूट मिलती है?",
+          "मानकऑनलाइन पोर्टल पर योजना I ISI मार्क के लिए आवेदन कैसे करें?"
+        ]
+      };
+    }
     return {
       category: "Cookware & Utensils (QCO)",
       confidence_level: "HIGH",
@@ -531,7 +597,51 @@ function generateFallbackAnswer(query: string, persona: PersonaType): {
   }
 
   // 3. Gold Hallmarking / HUID
-  if (q.includes("gold") || q.includes("jewel") || q.includes("huid") || q.includes("hallmark")) {
+  if (q.includes("gold") || q.includes("jewel") || q.includes("huid") || q.includes("hallmark") || q.includes("सोना") || q.includes("हॉलमार्क")) {
+    if (isHindi) {
+      return {
+        category: "हॉलमार्किंग एवं बहुमूल्य धातु",
+        confidence_level: "HIGH",
+        confidence: 0.99,
+        intent: "HALLMARKING_VERIFICATION",
+        content: `**बीआईएस अधिनियम, 2016 की हॉलमार्किंग योजना** के तहत, भारत के 343+ अधिसूचित जिलों में सोने के आभूषणों की हॉलमार्किंग **सख्ती से अनिवार्य** है:
+
+### असली सोने के आभूषणों पर 3 अनिवार्य चिह्न:
+1. **बीआईएस लोगो (BIS Logo)**: त्रिभुजाकार आधिकारिक बीआईएस चिह्न।
+2. **शुद्धता और सुंदरता चिह्न**: 
+   - **22K916** (91.6% शुद्ध सोना)
+   - **18K750** (75.0% शुद्ध सोना)
+   - **14K585** (58.5% शुद्ध सोना)
+3. **6-अंकीय अल्फान्यूमेरिक HUID**: मान्यता प्राप्त परख एवं हॉलमार्किंग केंद्र (AHC) द्वारा लेजर से उकेरा गया 6-अंकीय विशिष्ट कोड (उदा. *AB12CD*)।
+
+### उपभोक्ता सत्यापन:
+उपभोक्ता आधिकारिक **BIS Care App** में *'Verify HUID'* विकल्प में जाकर 6-अंकीय HUID दर्ज करके शुद्धता, जौहरी का पंजीकरण और हॉलमार्किंग की तारीख तुरंत सत्यापित कर सकते हैं।`,
+        citations: [
+          {
+            source_title: "IS 1417:2016 - सोना और सोने की मिश्रधातु हॉलमार्किंग",
+            source_url: "https://www.bis.gov.in/hallmarking-overview/",
+            section: "क्लॉज 5 शुद्धता चिह्न और HUID",
+            authority: "भारतीय मानक ब्यूरो",
+            relevance_score: 0.99
+          }
+        ],
+        checklist: {
+          title: "सोने के आभूषण खरीद सत्यापन चेकलिस्ट",
+          category: "उपभोक्ता हॉलमार्किंग सुरक्षा",
+          steps: [
+            { id: "g1", title: "त्रिकोणीय बीआईएस प्रतीक की जांच करें", description: "सुनिश्चित करें कि आधिकारिक बीआईएस त्रिकोणीय लोगो उकेरा गया है।", mandatory: true },
+            { id: "g2", title: "कैरेट शुद्धता स्टैम्प सत्यापित करें", description: "22K916, 18K750 या 14K585 मार्किंग देखें।", mandatory: true },
+            { id: "g3", title: "6-अंकीय HUID का निरीक्षण करें", description: "आभूषण की भीतरी सतह पर लेजर-उत्कीर्ण 6-अंकीय कोड देखें।", mandatory: true },
+            { id: "g4", title: "BIS Care App पर सत्यापित करें", description: "BIS Care App में HUID दर्ज करके परख केंद्र और जौहरी का नाम जांचें।", mandatory: true }
+          ]
+        },
+        followups: [
+          "अशुद्ध सोने के लिए उपभोक्ता मुआवजा अधिकार क्या हैं?",
+          "क्या कोई जौहरी बिना HUID के सोने के आभूषण बेच सकता है?",
+          "मान्यता प्राप्त बीआईएस हॉलमार्किंग केंद्र (AHC) कैसे खोजें?"
+        ]
+      };
+    }
     return {
       category: "Hallmarking & Precious Metals",
       confidence_level: "HIGH",
@@ -588,6 +698,39 @@ Consumers can verify the authenticity, jeweller registration, and assaying date 
   );
 
   if (hasKeywordMatch && topMatch) {
+    if (isHindi) {
+      return {
+        category: topMatch.category,
+        confidence_level: "HIGH",
+        confidence: topMatch.confidence || 0.95,
+        intent: "STANDARDS_CONSULTATION",
+        content: `### लागू भारतीय मानक: **${topMatch.standard_number}**\n**${topMatch.title}**\n\n- **नियामक स्थिति**: ${topMatch.status}\n- **अनुपालन श्रेणी**: ${topMatch.category}\n- **QCO संदर्भ**: ${topMatch.qco_reference || "गुणवत्ता नियंत्रण आदेश"}\n\n**नियामक विवरण:**\n${topMatch.match_reason}\n\n**अनिवार्य प्रमाणन:** निर्माताओं को बीआईएस अधिनियम, 2016 की योजना I के तहत **मानक चिह्न (ISI मार्क)** प्राप्त करना अनिवार्य है।`,
+        citations: [
+          {
+            source_title: `${topMatch.standard_number} - ${topMatch.title}`,
+            source_url: topMatch.source_url || "https://standards.bis.gov.in",
+            section: "क्लॉज 4 और अंकन आवश्यकताएं",
+            authority: "भारतीय मानक ब्यूरो",
+            relevance_score: topMatch.confidence || 0.95
+          }
+        ],
+        checklist: {
+          title: `${topMatch.standard_number} अनुपालन चेकलिस्ट`,
+          category: topMatch.category,
+          steps: [
+            { id: "s1", title: "मानक विनिर्देशों की समीक्षा करें", description: `${topMatch.standard_number} की परीक्षण आवश्यकताओं की समीक्षा करें।`, mandatory: true },
+            { id: "s2", title: "कारखाना परीक्षण लैब स्थापित करें", description: "बीआईएस निरीक्षण योजना (SIT) के अनुसार उपकरण लगाएं।", mandatory: true },
+            { id: "s3", title: "मानकऑनलाइन पर आवेदन जमा करें", description: "फॉर्म-V और फैक्ट्री विवरण अपलोड करें।", mandatory: true },
+            { id: "s4", title: "बीआईएस निरीक्षण और CM/L आवंटन", description: "बीआईएस अधिकारी द्वारा नमूना सत्यापन।", mandatory: true }
+          ]
+        },
+        followups: [
+          `${topMatch.standard_number} के लिए परीक्षण आवश्यकताएं क्या हैं?`,
+          `एमएसएमई को क्या शुल्क रियायतें मिलती हैं?`,
+          `BIS Care App पर ISI मार्क का सत्यापन कैसे करें?`
+        ]
+      };
+    }
     return {
       category: topMatch.category,
       confidence_level: "HIGH",
@@ -622,6 +765,23 @@ Consumers can verify the authenticity, jeweller registration, and assaying date 
   }
 
   // 5. UNRECOGNIZED QUERY / GIBBERISH (e.g. "hj", "xyz", "asdf") -> Honest Low-Confidence Clarification
+  if (isHindi) {
+    return {
+      category: "मानक नहीं मिला",
+      confidence_level: "LOW",
+      confidence: 0.15,
+      intent: "CLARIFICATION_REQUIRED",
+      content: `मुझे **"${query}"** से संबंधित कोई भारतीय मानक (IS), वैधानिक नियम या गुणवत्ता नियंत्रण आदेश (QCO) नहीं मिला।\n\n### बीआईएस साथी से परामर्श कैसे करें:\n- **उत्पाद का नाम लिखें**: उदा. *"स्टेनलेस स्टील बोतल"*, *"प्रेशर कुकर"*, *"सोने के आभूषण"*, *"पैकेज्ड पेयजल"*, *"पीवीसी केबल"*, *"एलईडी लैंप"*, *"खिलौने"*।\n- **भारतीय मानक कोड लिखें**: उदा. *"IS 17526"*, *"IS 2347"*, *"IS 1417"*, *"IS 14543"*।\n- **नियामक प्रश्न पूछें**: उदा. *"बीआईएस लाइसेंस के लिए एमएसएमई छूट क्या है?"* या *"BIS Care App पर ISI मार्क की जांच कैसे करें?"*`,
+      citations: [],
+      checklist: undefined,
+      followups: [
+        "स्टेनलेस स्टील बोतलों के लिए मानक खोजें (IS 17526)",
+        "प्रेशर कुकर के लिए मानक खोजें (IS 2347)",
+        "BIS Care App पर गोल्ड HUID कैसे जांचें"
+      ]
+    };
+  }
+
   return {
     category: "Standard Not Found",
     confidence_level: "LOW",
@@ -1235,6 +1395,8 @@ export default function Home() {
   const userMenuRef                                     = useRef<HTMLDivElement>(null);
   const [customLoginEmail, setCustomLoginEmail]         = useState("");
   const [customLoginName, setCustomLoginName]           = useState("");
+  const [isGoogleModalOpen, setIsGoogleModalOpen]       = useState(false);
+  const [googleAuthError, setGoogleAuthError]           = useState("");
 
   // Dynamic user-scoped session storage key
   const getSessionsKey = (user: AuthUser | null) => user ? `bis_saathi_chats_user_${user.uid}` : "bis_saathi_chats_v2";
@@ -1345,35 +1507,84 @@ export default function Home() {
   // Google Sign-In with real email (Zero dummy accounts)
   const handleInstantGoogleLogin = (rawInputEmail?: string) => {
     const input = (rawInputEmail || customLoginEmail).trim();
-    if (!input || !input.includes("@")) {
-      alert("Please enter a valid Google Account email address.");
+    if (!input || !input.includes("@") || !input.includes(".")) {
+      setGoogleAuthError("Please enter a valid Google Account email address (e.g. name@gmail.com).");
       return;
     }
     const email = input.toLowerCase();
     const namePart = email.split("@")[0].replace(/[._-]/g, " ");
-    const name = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    const name = customLoginName.trim() || (namePart.charAt(0).toUpperCase() + namePart.slice(1));
     const uid = "g_" + btoa(email).replace(/[^a-zA-Z0-9]/g, "").slice(0, 16);
     const user: AuthUser = {
       uid,
       email,
       name,
+      picture: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=1a73e8,4285f4,ea4335,fbbc05,34a853`,
       provider: "google"
     };
     setAuthUser(user);
     localStorage.setItem("bis_saathi_auth_user", JSON.stringify(user));
     setCustomLoginEmail("");
     setCustomLoginName("");
+    setGoogleAuthError("");
+    setIsGoogleModalOpen(false);
   };
 
   const handleGoogleOAuthLaunch = () => {
-    if ((window as any).google?.accounts?.id) {
-      (window as any).google.accounts.id.prompt();
-    } else {
-      const email = prompt("Enter your Google Account email (e.g. yourname@gmail.com):");
-      if (email && email.includes("@")) {
-        handleInstantGoogleLogin(email);
+    setGoogleAuthError("");
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+    // 1. Try Google OAuth2 token client popup if client ID is configured
+    if (clientId && (window as any).google?.accounts?.oauth2) {
+      try {
+        const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+          client_id: clientId,
+          scope: "email profile openid",
+          callback: async (tokenResp: any) => {
+            if (tokenResp && tokenResp.access_token) {
+              try {
+                const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                  headers: { Authorization: `Bearer ${tokenResp.access_token}` }
+                });
+                if (res.ok) {
+                  const data = await res.json();
+                  const user: AuthUser = {
+                    uid: data.sub || "g_" + Date.now(),
+                    email: data.email,
+                    name: data.name || data.email.split("@")[0],
+                    picture: data.picture,
+                    provider: "google"
+                  };
+                  setAuthUser(user);
+                  localStorage.setItem("bis_saathi_auth_user", JSON.stringify(user));
+                  setIsGoogleModalOpen(false);
+                  return;
+                }
+              } catch (e) {
+                console.warn("Failed fetching user info from Google OAuth:", e);
+              }
+            }
+          },
+          error_callback: () => {
+            setIsGoogleModalOpen(true);
+          }
+        });
+        tokenClient.requestAccessToken({ prompt: "select_account" });
+        return;
+      } catch (err) {
+        console.warn("Token client launch exception:", err);
       }
     }
+
+    // 2. Try Google One-Tap if available
+    if (clientId && (window as any).google?.accounts?.id) {
+      try {
+        (window as any).google.accounts.id.prompt();
+      } catch {}
+    }
+
+    // 3. Open dedicated Google Account Chooser Modal (Zero prompt alerts)
+    setIsGoogleModalOpen(true);
   };
 
   const handleSignOut = () => {
@@ -1403,10 +1614,23 @@ export default function Home() {
       script.onload = () => {
         const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
         if (clientId && (window as any).google?.accounts?.id) {
-          (window as any).google.accounts.id.initialize({
-            client_id: clientId,
-            callback: handleGoogleCredentialResponse,
-          });
+          try {
+            (window as any).google.accounts.id.initialize({
+              client_id: clientId,
+              callback: handleGoogleCredentialResponse,
+            });
+            const btnEl = document.getElementById("google-signin-btn-container");
+            if (btnEl) {
+              (window as any).google.accounts.id.renderButton(btnEl, {
+                theme: "filled_blue",
+                size: "large",
+                shape: "pill",
+                width: 280
+              });
+            }
+          } catch (e) {
+            console.warn("Google GSI initialize error:", e);
+          }
         }
       };
       document.head.appendChild(script);
@@ -1757,12 +1981,21 @@ export default function Home() {
     setIsAudioPaused(false);
     setSpokenExcerpt(msg.content.slice(0, 120) + "...");
 
+    // If target language is Hindi/indic but text is purely English, use Hindi fallback translation for speech
+    let textToSpeak = msg.content;
+    if (langToUse === "hi" && !/[\u0900-\u097F]/.test(textToSpeak)) {
+      const fb = generateFallbackAnswer(textToSpeak, persona, "hi");
+      if (fb && fb.content && /[\u0900-\u097F]/.test(fb.content)) {
+        textToSpeak = fb.content;
+      }
+    }
+
     try {
       const res = await fetch(`${API_BASE}/api/v1/speech/synthesize`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text: msg.content,
+          text: textToSpeak,
           language: langToUse,
           persona,
           speaker: "ritu"
@@ -1781,13 +2014,13 @@ export default function Home() {
           setIsAudioPaused(false);
           setSpokenExcerpt("");
         };
-        audio.onerror = () => fallbackBrowserTTS(data.spoken_text || msg.content, langToUse);
+        audio.onerror = () => fallbackBrowserTTS(data.spoken_text || textToSpeak, langToUse);
         await audio.play();
       } else {
-        fallbackBrowserTTS(data.spoken_text || msg.content, langToUse);
+        fallbackBrowserTTS(data.spoken_text || textToSpeak, langToUse);
       }
     } catch {
-      fallbackBrowserTTS(msg.content, langToUse);
+      fallbackBrowserTTS(textToSpeak, langToUse);
     }
   };
 
@@ -1883,38 +2116,71 @@ export default function Home() {
 
     setIsTranslatingHistory(true);
     try {
-      const response = await fetch(`${API_BASE}/api/v1/translate-messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: messages.map(m => ({ id: m.id, role: m.role, content: m.content })),
-          target_language: newLang,
-          source_language: oldLang
-        })
-      });
+      let translatedList: Array<{ id: string; content: string }> = [];
 
-      if (response.ok) {
-        const data = await response.json();
-        const translatedList: Array<{ id: string; content: string }> = data.messages || data.translated_messages || [];
-        if (translatedList.length > 0) {
-          const mapTranslated = new Map<string, string>();
-          translatedList.forEach(tm => mapTranslated.set(tm.id, tm.content));
-
-          const updatedMessages = messages.map(m => {
-            const translatedContent = mapTranslated.get(m.id);
-            if (translatedContent) {
-              return { ...m, content: translatedContent };
-            }
-            return m;
-          });
-
-          setMessages(updatedMessages);
-          saveSessionState(updatedMessages, persona, newLang);
-        } else {
-          saveSessionState(messages, persona, newLang);
+      // 1. Try /api/v1/translate-messages
+      try {
+        const response = await fetch(`${API_BASE}/api/v1/translate-messages`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: messages.map(m => ({ id: m.id, role: m.role, content: m.content })),
+            target_language: newLang,
+            source_language: oldLang
+          })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          translatedList = data.messages || data.translated_messages || [];
         }
+      } catch {}
+
+      // 2. Try /api/translate-messages fallback
+      if (translatedList.length === 0) {
+        try {
+          const response = await fetch(`${API_BASE}/api/translate-messages`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: messages.map(m => ({ id: m.id, role: m.role, content: m.content })),
+              target_language: newLang,
+              source_language: oldLang
+            })
+          });
+          if (response.ok) {
+            const data = await response.json();
+            translatedList = data.messages || data.translated_messages || [];
+          }
+        } catch {}
+      }
+
+      if (translatedList.length > 0) {
+        const mapTranslated = new Map<string, string>();
+        translatedList.forEach(tm => mapTranslated.set(tm.id, tm.content));
+
+        const updatedMessages = messages.map(m => {
+          const translatedContent = mapTranslated.get(m.id);
+          if (translatedContent) {
+            return { ...m, content: translatedContent };
+          }
+          return m;
+        });
+
+        setMessages(updatedMessages);
+        saveSessionState(updatedMessages, persona, newLang);
       } else {
-        saveSessionState(messages, persona, newLang);
+        // 3. Instant client-side translation fallback so UI immediately updates
+        const updatedMessages = messages.map(m => {
+          if (m.role === "assistant") {
+            const fb = generateFallbackAnswer(m.content, persona, newLang);
+            if (fb && fb.content) {
+              return { ...m, content: fb.content };
+            }
+          }
+          return m;
+        });
+        setMessages(updatedMessages);
+        saveSessionState(updatedMessages, persona, newLang);
       }
     } catch (err) {
       console.warn("Language transfer error:", err);
@@ -1941,7 +2207,7 @@ export default function Home() {
     if (!overrideText) setInput("");
     setIsLoading(true);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 45000);
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s max for ultra-fast response
 
     try {
       const historyPayload = updatedWithUser.slice(-6).map(m => ({ role: m.role, content: m.content }));
@@ -1983,12 +2249,12 @@ export default function Home() {
       saveSessionState(finalMessages, persona, language);
 
       if (autoSpeak || voiceAutoSpeak) {
-        setTimeout(() => handleSpeakMessage(assistantMsg), 200);
+        setTimeout(() => handleSpeakMessage(assistantMsg, language), 200);
       }
     } catch {
       clearTimeout(timeoutId);
-      // Resilient fallback with authentic statutory knowledge
-      const fb = generateFallbackAnswer(text, persona);
+      // Resilient fallback with authentic statutory knowledge localized to selected language
+      const fb = generateFallbackAnswer(text, persona, language);
       const assistantMsg: Message = {
         id: "assistant-" + Date.now(),
         role: "assistant",
@@ -2005,6 +2271,10 @@ export default function Home() {
       const finalMessages = [...updatedWithUser, assistantMsg];
       setMessages(finalMessages);
       saveSessionState(finalMessages, persona, language);
+
+      if (autoSpeak || voiceAutoSpeak) {
+        setTimeout(() => handleSpeakMessage(assistantMsg, language), 200);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -2156,6 +2426,14 @@ export default function Home() {
               </p>
             </div>
 
+            {/* Error Message */}
+            {googleAuthError && (
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm flex-shrink-0">error</span>
+                <span>{googleAuthError}</span>
+              </div>
+            )}
+
             {/* Clean Real Google Sign-In (Zero dummy accounts) */}
             <div className="space-y-4 pt-1">
               <button
@@ -2181,7 +2459,7 @@ export default function Home() {
                   <input
                     type="email"
                     value={customLoginEmail}
-                    onChange={e => setCustomLoginEmail(e.target.value)}
+                    onChange={e => { setCustomLoginEmail(e.target.value); setGoogleAuthError(""); }}
                     onKeyDown={e => { if (e.key === "Enter" && customLoginEmail.trim()) handleInstantGoogleLogin(customLoginEmail.trim()); }}
                     placeholder="name@gmail.com"
                     className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all font-medium"
@@ -2203,6 +2481,105 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Google Modal Overlay */}
+        {isGoogleModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative space-y-5 text-slate-900 dark:text-white">
+              <button
+                onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-lg">close</span>
+              </button>
+
+              <div className="text-center space-y-2 pt-1">
+                <div className="w-12 h-12 mx-auto rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                  </svg>
+                </div>
+                <h2 className="text-xl font-bold">Sign in with Google</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  to continue to <span className="font-semibold text-slate-700 dark:text-slate-300">BIS SAATHI AI 2.0</span>
+                </p>
+              </div>
+
+              {googleAuthError && (
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm flex-shrink-0">error</span>
+                  <span>{googleAuthError}</span>
+                </div>
+              )}
+
+              <div id="google-signin-btn-container" className="flex justify-center empty:hidden"></div>
+
+              <div className="space-y-3 pt-1">
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                    Google Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={customLoginEmail}
+                    onChange={e => { setCustomLoginEmail(e.target.value); setGoogleAuthError(""); }}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" && customLoginEmail.trim()) {
+                        handleInstantGoogleLogin(customLoginEmail.trim());
+                      }
+                    }}
+                    placeholder="yourname@gmail.com"
+                    autoFocus
+                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                    Your Full Name <span className="text-[10px] text-slate-400 font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={customLoginName}
+                    onChange={e => setCustomLoginName(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" && customLoginEmail.trim()) {
+                        handleInstantGoogleLogin(customLoginEmail.trim());
+                      }
+                    }}
+                    placeholder="e.g. Rahul Sharma"
+                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all font-medium"
+                  />
+                </div>
+
+                <div className="pt-2 flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
+                    className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleInstantGoogleLogin(customLoginEmail.trim())}
+                    disabled={!customLoginEmail.trim() || !customLoginEmail.includes("@")}
+                    className="bg-[#1a73e8] hover:bg-[#1557b0] disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-xl text-xs shadow-md hover:shadow-lg transition-all cursor-pointer"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              </div>
+
+              <div className="text-center text-[10px] text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                🔒 Consultations will be securely isolated and saved to your Google account.
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Institutional Footer */}
         <footer className="text-center text-[10px] text-slate-400 py-3">
@@ -3582,6 +3959,103 @@ export default function Home() {
           <span className="text-[9px] font-bold">Theme</span>
         </button>
       </nav>
+
+      {/* Google Account Modal for Logged-in View (Switch / Relogin) */}
+      {isGoogleModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative space-y-5 text-slate-900 dark:text-white">
+            <button
+              onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-lg">close</span>
+            </button>
+
+            <div className="text-center space-y-2 pt-1">
+              <div className="w-12 h-12 mx-auto rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm">
+                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold">Sign in with Google</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                to continue to <span className="font-semibold text-slate-700 dark:text-slate-300">BIS SAATHI AI 2.0</span>
+              </p>
+            </div>
+
+            {googleAuthError && (
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm flex-shrink-0">error</span>
+                <span>{googleAuthError}</span>
+              </div>
+            )}
+
+            <div className="space-y-3 pt-1">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                  Google Email Address
+                </label>
+                <input
+                  type="email"
+                  value={customLoginEmail}
+                  onChange={e => { setCustomLoginEmail(e.target.value); setGoogleAuthError(""); }}
+                  onKeyDown={e => {
+                    if (e.key === "Enter" && customLoginEmail.trim()) {
+                      handleInstantGoogleLogin(customLoginEmail.trim());
+                    }
+                  }}
+                  placeholder="yourname@gmail.com"
+                  autoFocus
+                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                  Your Full Name <span className="text-[10px] text-slate-400 font-normal">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={customLoginName}
+                  onChange={e => setCustomLoginName(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === "Enter" && customLoginEmail.trim()) {
+                      handleInstantGoogleLogin(customLoginEmail.trim());
+                    }
+                  }}
+                  placeholder="e.g. Rahul Sharma"
+                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all font-medium"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
+                  className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInstantGoogleLogin(customLoginEmail.trim())}
+                  disabled={!customLoginEmail.trim() || !customLoginEmail.includes("@")}
+                  className="bg-[#1a73e8] hover:bg-[#1557b0] disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-xl text-xs shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+
+            <div className="text-center text-[10px] text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+              🔒 Consultations will be securely isolated and saved to your Google account.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

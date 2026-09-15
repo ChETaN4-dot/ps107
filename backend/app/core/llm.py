@@ -7,13 +7,119 @@ and strict, beautifully structured factual synthesis.
 
 import re
 import time
+import json
 import logging
-from typing import Optional
+from typing import Optional, List, Dict, Any
 import httpx
 
 from app.config import settings
+from app.models.schemas import LanguageType, TranslateMessageItem
 
 logger = logging.getLogger(__name__)
+
+class GroqLLMService:
+    """High-speed cloud LLM integration using Groq API (Qwen / Llama)."""
+
+    def __init__(self):
+        self.api_key = settings.GROQ_API_KEY.strip()
+        self.base_url = settings.GROQ_BASE_URL.rstrip("/")
+        self.model_name = settings.GROQ_MODEL
+        self._client = httpx.Client(
+            timeout=10.0,
+            limits=httpx.Limits(max_keepalive_connections=10, max_connections=20)
+        )
+
+    def is_available(self) -> bool:
+        return bool(self.api_key and len(self.api_key) > 8)
+
+    def generate(self, system_prompt: str, user_prompt: str) -> Optional[str]:
+        if not self.is_available():
+            return None
+        url = f"{self.base_url}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": self.model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": 0.1,
+            "max_tokens": 1024,
+            "top_p": 0.95
+        }
+        try:
+            resp = self._client.post(url, headers=headers, json=payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                content = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+                if content:
+                    logger.info(f"Groq LLM generated response ({len(content)} chars)")
+                    return content
+            logger.warning(f"Groq generation returned HTTP {resp.status_code}: {resp.text[:120]}")
+            return None
+        except Exception as e:
+            logger.warning(f"Groq generation error: {e}")
+            return None
+
+    def translate_messages_fast(
+        self,
+        messages: List[TranslateMessageItem],
+        target_lang: LanguageType,
+        source_lang: Optional[LanguageType] = None
+    ) -> Optional[List[TranslateMessageItem]]:
+        if not self.is_available() or not messages:
+            return None
+
+        target_name = "Hindi (हिन्दी) in Devanagari script" if target_lang in [LanguageType.HI, LanguageType.HINGLISH] else target_lang.value
+        input_list = [{"id": m.id, "role": m.role, "content": m.content} for m in messages]
+        prompt = (
+            f"You are a statutory translator for the Bureau of Indian Standards (BIS).\n"
+            f"Translate the 'content' of each conversation message into natural, fluent {target_name}.\n"
+            "STRICT RULES:\n"
+            "1. Preserve standard numbers (e.g., 'IS 14543', 'IS 17803:2022', 'IS 17526'), 'HUID', 'CML', 'QCO', and official URLs unchanged.\n"
+            "2. Keep the exact same 'id' and 'role' for each message.\n"
+            "3. Respond ONLY with a valid JSON array of objects with keys 'id', 'role', and 'content'.\n\n"
+            f"Messages to translate:\n{json.dumps(input_list, ensure_ascii=False)}"
+        )
+        url = f"{self.base_url}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": self.model_name,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.05,
+            "max_tokens": 1500
+        }
+        try:
+            resp = self._client.post(url, headers=headers, json=payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                raw_text = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+                # Robust extraction of JSON array [ ... ]
+                array_match = re.search(r"\[\s*\{[\s\S]*\}\s*\]", raw_text)
+                json_str = array_match.group(0) if array_match else raw_text
+                parsed = json.loads(json_str)
+
+                if isinstance(parsed, list) and len(parsed) > 0:
+                    results = []
+                    for item in parsed:
+                        results.append(TranslateMessageItem(
+                            id=str(item.get("id", "")),
+                            role=item.get("role", "user"),
+                            content=item.get("content", "")
+                        ))
+                    logger.info(f"Groq fast translation succeeded for {len(results)} messages to [{target_lang.value}]")
+                    return results
+        except Exception as e:
+            logger.warning(f"Groq fast translation error: {e}")
+        return None
 
 class OllamaLLMService:
     def __init__(self):
@@ -258,11 +364,44 @@ class OllamaLLMService:
 
         return "\n".join(response_parts).strip()
 
+class UnifiedLLMService:
+    """Unified LLM router prioritizing high-speed Groq cloud with Ollama and deterministic grounding fallbacks."""
+
+    def __init__(self):
+        self.groq = GroqLLMService()
+        self.ollama = OllamaLLMService()
+
+    def generate(self, system_prompt: str, user_prompt: str) -> str:
+        # 1. High-speed Groq Cloud LLM
+        if self.groq.is_available():
+            ans = self.groq.generate(system_prompt, user_prompt)
+            if ans:
+                return ans
+
+        # 2. Local Ollama LLM
+        if self.ollama.is_available():
+            ans = self.ollama.generate(system_prompt, user_prompt)
+            if ans:
+                return ans
+
+        # 3. Deterministic verified statutory synthesis
+        return self.ollama._fallback_synthesis(system_prompt, user_prompt)
+
+    def translate_messages_fast(
+        self,
+        messages: List[TranslateMessageItem],
+        target_lang: LanguageType,
+        source_lang: Optional[LanguageType] = None
+    ) -> Optional[List[TranslateMessageItem]]:
+        if self.groq.is_available():
+            return self.groq.translate_messages_fast(messages, target_lang, source_lang)
+        return None
+
 _llm_service = None
 
-def get_llm_service() -> OllamaLLMService:
+def get_llm_service() -> UnifiedLLMService:
     global _llm_service
     if _llm_service is None:
-        _llm_service = OllamaLLMService()
+        _llm_service = UnifiedLLMService()
     return _llm_service
 

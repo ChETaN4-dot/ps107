@@ -185,6 +185,17 @@ class SpeechService:
         # 1. Clean and optimize text for speakability
         spoken_text = self.clean_for_speech(request.text)
 
+        # 2. If target language is an Indian language but input text is in English, translate spoken text
+        if target_lang != LanguageType.EN and spoken_text.isascii() and len(spoken_text) > 0:
+            try:
+                from app.services.sarvam import get_sarvam_service
+                sarvam = get_sarvam_service()
+                tr_spoken = sarvam.translate_text(spoken_text, target_lang, LanguageType.EN)
+                if tr_spoken and tr_spoken.strip() and not tr_spoken.isascii():
+                    spoken_text = self.clean_for_speech(tr_spoken)
+            except Exception as e:
+                logger.debug(f"Spoken text translation bypass: {e}")
+
         if not self.is_configured():
             logger.info("Sarvam API key not set. Indicating browser SpeechSynthesis fallback.")
             return SpeechSynthesizeResponse(

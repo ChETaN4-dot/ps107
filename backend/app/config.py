@@ -37,10 +37,13 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL_NAME: str = "BAAI/bge-small-en-v1.5"
     EMBEDDING_DEVICE: str = "cpu"
     
-    # LLM (Ollama)
+    # LLM (Ollama & Groq Cloud)
     OLLAMA_BASE_URL: str = Field(default="http://localhost:11434", validation_alias="OLLAMA_BASE_URL")
     OLLAMA_MODEL: str = Field(default="qwen2.5:7b", validation_alias="OLLAMA_MODEL")
     OLLAMA_TIMEOUT: float = 60.0
+    GROQ_API_KEY: str = Field(default="", validation_alias="GROQ_API_KEY")
+    GROQ_MODEL: str = Field(default="qwen/qwen3.8-27b", validation_alias="GROQ_MODEL")
+    GROQ_BASE_URL: str = Field(default="https://api.groq.com/openai/v1", validation_alias="GROQ_BASE_URL")
     
     # Multilingual Layer & Speech (Sarvam AI for 10 Indian Languages)
     SARVAM_API_KEY: str = Field(default="", validation_alias="SARVAM_API_KEY")

@@ -1721,11 +1721,13 @@ export default function Home() {
     if (savedVoice) setVoiceAutoSpeak(savedVoice === "true");
   }, []);
 
-  // ── 1b. Load User-Specific Chat Sessions on Auth Change ───────────────
+  // ── 1b. Load User-Specific Chat Sessions on Auth Change (Cloud + Local) ───────
   useEffect(() => {
     if (typeof window === "undefined") return;
     const key = getSessionsKey(authUser);
     const savedSessions = localStorage.getItem(key);
+    let hasLoadedLocal = false;
+
     if (savedSessions) {
       try {
         const parsed: ChatSession[] = JSON.parse(savedSessions);
@@ -1735,16 +1737,35 @@ export default function Home() {
           setMessages(parsed[0].messages);
           setPersona(parsed[0].persona || "msme");
           setLanguage(parsed[0].language || "en");
-          return;
+          hasLoadedLocal = true;
         }
       } catch {}
     }
 
-    // Initialize fresh session for this user profile
-    startNewChat();
+    if (!hasLoadedLocal) {
+      startNewChat();
+    }
+
+    // Fetch cross-device synced chats from cloud database for this verified Google user ID
+    if (authUser?.email) {
+      const userIdent = authUser.email.toLowerCase();
+      fetch(`${API_BASE}/api/v1/user/chats?user_id=${encodeURIComponent(userIdent)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.status === "success" && Array.isArray(data.sessions) && data.sessions.length > 0) {
+            setSessions(data.sessions);
+            localStorage.setItem(key, JSON.stringify(data.sessions));
+            setCurrentSessionId(data.sessions[0].id);
+            setMessages(data.sessions[0].messages);
+            setPersona(data.sessions[0].persona || "msme");
+            setLanguage(data.sessions[0].language || "en");
+          }
+        })
+        .catch(err => console.warn("Cloud chat sync warning:", err));
+    }
   }, [authUser]);
 
-  // ── 2. Save Sessions to User-Specific Storage on Change ─────────────
+  // ── 2. Save Sessions to User-Specific Storage & Cloud on Change ─────
   const saveSessionState = (updatedMessages: Message[], activePersona: PersonaType, activeLang: LanguageType) => {
     if (!currentSessionId) return;
     const storageKey = getSessionsKey(authUser);
@@ -1772,6 +1793,24 @@ export default function Home() {
       }
 
       localStorage.setItem(storageKey, JSON.stringify(newSessions));
+
+      // Asynchronously sync to cloud database bound to verified Google User ID
+      if (authUser?.email) {
+        fetch(`${API_BASE}/api/v1/user/chats`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: authUser.email.toLowerCase(),
+            session_id: updatedSession.id,
+            title: updatedSession.title,
+            persona: updatedSession.persona,
+            language: updatedSession.language,
+            messages: updatedSession.messages,
+            updated_at: updatedSession.updatedAt
+          })
+        }).catch(e => console.warn("Cloud save warning:", e));
+      }
+
       return newSessions;
     });
   };
@@ -1827,6 +1866,12 @@ export default function Home() {
       }
       return filtered;
     });
+
+    if (authUser?.email) {
+      fetch(`${API_BASE}/api/v1/user/chats?user_id=${encodeURIComponent(authUser.email.toLowerCase())}&session_id=${encodeURIComponent(sessionId)}`, {
+        method: "DELETE"
+      }).catch(e => console.warn("Cloud delete warning:", e));
+    }
   };
 
   const clearAllSessions = () => {
@@ -1835,6 +1880,12 @@ export default function Home() {
       const storageKey = getSessionsKey(authUser);
       localStorage.removeItem(storageKey);
       startNewChat();
+
+      if (authUser?.email) {
+        fetch(`${API_BASE}/api/v1/user/chats?user_id=${encodeURIComponent(authUser.email.toLowerCase())}`, {
+          method: "DELETE"
+        }).catch(e => console.warn("Cloud clear warning:", e));
+      }
     }
   };
 

@@ -54,6 +54,8 @@ frontend/CLAUDE.md
 logs/
 *.log
 data/logs/
+*.db
+backend/data/*.db
 .tempmediaStorage/
 
 # Operating System & Editor Files

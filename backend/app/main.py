@@ -16,6 +16,7 @@ from app.config import settings
 from app.routers.chat import router as chat_router
 from app.routers.health import router as health_router
 from app.routers.speech import router as speech_router
+from app.routers.user_chats import router as user_chats_router
 
 # Configure structured logging
 logging.basicConfig(
@@ -79,11 +80,13 @@ app.add_middleware(
     expose_headers=["X-Request-ID", "X-Response-Time-MS"]
 )
 
-# Include Chat & Speech Routers: Both /api/v1 and /api supported
+# Include Chat, Speech & User Chats Routers: Both /api/v1 and /api supported
 app.include_router(chat_router, prefix=settings.API_V1_PREFIX)
 app.include_router(chat_router, prefix="/api")
 app.include_router(speech_router, prefix=settings.API_V1_PREFIX)
 app.include_router(speech_router, prefix="/api")
+app.include_router(user_chats_router, prefix=settings.API_V1_PREFIX)
+app.include_router(user_chats_router, prefix="/api")
 app.include_router(health_router)
 
 @app.get("/", tags=["Root"])

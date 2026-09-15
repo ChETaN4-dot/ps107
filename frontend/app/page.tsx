@@ -1573,12 +1573,16 @@ export default function Home() {
                 setGoogleAuthError("Failed retrieving user profile from Google. Please try again.");
               }
             } else if (tokenResp?.error) {
-              setGoogleAuthError("Google Sign-In was cancelled or failed: " + (tokenResp.error_description || tokenResp.error));
+              if (tokenResp.error === "popup_closed_by_user" || tokenResp.error === "access_denied") {
+                setGoogleAuthError("Sign-in was closed. Please select your Google account to proceed.");
+              } else {
+                setGoogleAuthError("Unable to complete Google sign-in. Please try again.");
+              }
             }
           },
           error_callback: (err: any) => {
-            console.error("Token client error:", err);
-            setGoogleAuthError("Google Sign-In failed. Please verify that your domain is added to 'Authorized JavaScript origins' in Google Cloud Console.");
+            console.warn("Google OAuth callback:", err);
+            setGoogleAuthError("Unable to sign in with Google. Please ensure popups are allowed or try again.");
           }
         });
         tokenClient.requestAccessToken({ prompt: "select_account" });
@@ -1594,10 +1598,10 @@ export default function Home() {
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=email%20profile%20openid&prompt=select_account`;
       const popup = window.open(authUrl, "google_oauth_popup", "width=520,height=650,menubar=no,toolbar=no");
       if (!popup) {
-        setGoogleAuthError("Popup blocked. Please allow popups for this site to sign in with Google.");
+        setGoogleAuthError("Sign-in window was blocked. Please allow popups for this site.");
       }
     } catch (e) {
-      setGoogleAuthError("Failed to open Google Sign-In popup.");
+      setGoogleAuthError("Unable to open Google sign-in. Please try again.");
     }
   };
 
@@ -2543,16 +2547,26 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Error Message */}
+            {/* Error Message (Consumer App Styling) */}
             {googleAuthError && (
-              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm flex-shrink-0">error</span>
-                <span>{googleAuthError}</span>
+              <div className="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/50 text-amber-900 dark:text-amber-200 text-xs flex items-center justify-between gap-2.5 animate-in fade-in duration-150 shadow-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="material-symbols-outlined text-[17px] text-amber-600 dark:text-amber-400 flex-shrink-0">info</span>
+                  <span className="font-medium text-[11.5px] leading-snug">{googleAuthError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGoogleAuthError("")}
+                  className="text-amber-600/70 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-100 p-0.5 rounded cursor-pointer flex-shrink-0 transition-colors"
+                  title="Dismiss"
+                >
+                  <span className="material-symbols-outlined text-[15px]">close</span>
+                </button>
               </div>
             )}
 
             {/* Official Google Sign-In (Zero fake emails, Zero bypasses) */}
-            <div className="space-y-4 pt-1">
+            <div className="space-y-3 pt-1">
               <button
                 type="button"
                 onClick={handleGoogleOAuthLaunch}
@@ -2568,17 +2582,6 @@ export default function Home() {
               </button>
 
               <div id="google-signin-btn-container" className="flex justify-center empty:hidden"></div>
-
-              {/* Status & Configuration Help */}
-              <div className="pt-2 text-center">
-                <button
-                  type="button"
-                  onClick={() => { setGoogleAuthError(""); setIsGoogleModalOpen(true); }}
-                  className="text-[11px] text-slate-500 hover:text-[#1a73e8] dark:text-slate-400 dark:hover:text-[#4285F4] underline decoration-slate-300 dark:decoration-slate-700 transition-colors cursor-pointer"
-                >
-                  {configuredClientId || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? "⚙️ Manage Google OAuth Settings" : "⚙️ Need to configure Google Cloud Client ID?"}
-                </button>
-              </div>
             </div>
 
             <div className="pt-2 text-center text-[10px] text-slate-400 border-t border-slate-100 dark:border-slate-800">

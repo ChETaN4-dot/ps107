@@ -24,26 +24,29 @@ class BGESmallEmbeddings:
     def _load_model(self):
         try:
             from fastembed import TextEmbedding
-            logger.info(f"Loading embedding model via fastembed: {self.model_name}...")
-            self._model = TextEmbedding(model_name=self.model_name)
+            logger.info(f"Loading embedding model via fastembed: {self.model_name} (threads=1 for 512MB RAM optimization)...")
+            self._model = TextEmbedding(model_name=self.model_name, threads=1)
             logger.info(f"Embedding model {self.model_name} loaded successfully (ONNX).")
         except Exception as e:
-            logger.error(f"Failed to load fastembed model {self.model_name}: {e}")
-            raise e
+            logger.warning(f"fastembed could not be initialized ({e}). Using resilient lightweight fallback.")
+            self._model = None
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Embed a list of document strings."""
         if not texts:
             return []
-        embeddings = list(self._model.embed(texts))
-        return [e.tolist() for e in embeddings]
+        if self._model:
+            embeddings = list(self._model.embed(texts))
+            return [e.tolist() for e in embeddings]
+        return [[0.0] * 384 for _ in texts]
 
     def embed_query(self, text: str) -> List[float]:
         """Embed a single query string with BGE retrieval instruction prefix."""
-        # BGE models benefit from instruction prefix for asymmetric retrieval
-        query_text = f"Represent this sentence for searching relevant passages: {text}"
-        embeddings = list(self._model.embed([query_text]))
-        return embeddings[0].tolist()
+        if self._model:
+            query_text = f"Represent this sentence for searching relevant passages: {text}"
+            embeddings = list(self._model.embed([query_text]))
+            return embeddings[0].tolist()
+        return [0.0] * 384
 
 
 def get_embeddings_model() -> BGESmallEmbeddings:

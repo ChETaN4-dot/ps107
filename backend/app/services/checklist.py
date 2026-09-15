@@ -169,14 +169,14 @@ INTENT_TO_CHECKLIST = {
 }
 
 PROCEDURAL_TRIGGER_REGEX = re.compile(
-    r"\b(how to apply|checklist|steps|procedure|documents required|apply for|process of|requirement)\b",
+    r"\b(give me (a )?checklist|step[- ]by[- ]step guide|show checklist|application checklist)\b",
     re.IGNORECASE
 )
 
 class ChecklistService:
     @staticmethod
     def should_generate(user_msg: str, explicit_flag: bool = False) -> bool:
-        """Determines if a query requires an actionable checklist."""
+        """Determines if a query requires an actionable checklist. Only triggers if explicitly toggled or requested."""
         return explicit_flag or bool(PROCEDURAL_TRIGGER_REGEX.search(user_msg))
 
     @staticmethod

@@ -21,7 +21,21 @@ _vectorstore_instance = None
 
 class ChromaVectorStore:
     def __init__(self):
-        self.persist_dir = settings.CHROMA_PERSIST_DIR
+        # Resolve ChromaDB directory robustly (check data/chroma_db relative to repo root)
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        possible_dirs = [
+            repo_root / "data" / "chroma_db",
+            Path(settings.CHROMA_PERSIST_DIR),
+            Path("data/chroma_db").resolve(),
+            Path("../data/chroma_db").resolve(),
+        ]
+        chosen_dir = str(possible_dirs[0])
+        for p in possible_dirs:
+            if p.exists() and (p / "chroma.sqlite3").exists():
+                chosen_dir = str(p.resolve())
+                break
+
+        self.persist_dir = chosen_dir
         self.collection_name = settings.CHROMA_COLLECTION_NAME
         self.embeddings = get_embeddings_model()
         
@@ -44,11 +58,11 @@ class ChromaVectorStore:
         logger.info(f"Current collection count: {count}")
         if count == 0:
             chunks_path = Path(settings.CHUNKS_FILE_PATH)
-            if chunks_path.exists():
+            if chunks_path.exists() and settings.ENVIRONMENT == "development":
                 logger.info(f"Seeding vectorstore from {chunks_path}...")
                 self.index_chunks_from_file(str(chunks_path))
             else:
-                logger.warning(f"Chunks file not found at {chunks_path}. Collection remains empty.")
+                logger.warning("Vectorstore has 0 chunks. Skipping on-the-fly re-indexing to prevent exceeding 512MB RAM.")
 
     def index_chunks_from_file(self, file_path: str):
         """Load chunks from JSONL file and insert into ChromaDB."""

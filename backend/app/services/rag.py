@@ -602,7 +602,7 @@ class RAGService:
             "   b. Key Takeaway blockquote (e.g. '> **Key Takeaway:** ...') when a clear mandatory or statutory conclusion exists.\n"
             "   c. Standards Table (when multiple standards are mentioned): Use Markdown table | Standard | What it covers | Relevance |.\n"
             "   d. Regulatory / Mandatory Status: Use explicit tags like '• **✓ Mandatory Requirement:**' or '• **Supporting Guidance:**'. Never confuse mandatory with optional.\n"
-            "   e. Process Steps: When procedural guidance is requested, format as numbered bold steps (1., 2., 3.).\n"
+            "   e. Process Steps: ONLY when step-by-step procedure is explicitly requested by the user, format as numbered bold steps (1., 2., 3.); otherwise provide direct explanatory answers.\n"
             "   f. What You Can Do Next: End with 2-3 concise, actionable next steps.\n"
             "7. Do NOT dump source URLs or chunk IDs into the main prose (citations are handled separately in citation cards).\n"
             f"8. MANDATORY OUTPUT LANGUAGE: You MUST generate your response exclusively in {target_lang_str}. "

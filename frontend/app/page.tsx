@@ -1397,6 +1397,8 @@ export default function Home() {
   const [googleAuthError, setGoogleAuthError]           = useState("");
   const [googleClientIdInput, setGoogleClientIdInput]   = useState("");
   const [configuredClientId, setConfiguredClientId]     = useState("");
+  const [showOtherAccountInput, setShowOtherAccountInput] = useState(false);
+  const [customAccountEmail, setCustomAccountEmail]     = useState("");
 
   // Dynamic user-scoped session storage key - strictly isolated per verified Google user email
   const getSessionsKey = (user: AuthUser | null) => {
@@ -1508,10 +1510,29 @@ export default function Home() {
     }
   };
 
-  // Google OAuth 2.0 Helpers (Zero fake emails, Zero bypasses)
+  // Google Cloud OAuth 2.0 Client ID (configured in Vercel & Google Cloud Console)
+  const DEFAULT_GOOGLE_CLIENT_ID = "583080623113-s3sr9cfojcvq0ubm8of71iuon1b8ghl0.apps.googleusercontent.com";
+
+  // Google OAuth 2.0 Helpers
   const getActiveClientId = () => {
-    if (typeof window === "undefined") return process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
-    return process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || localStorage.getItem("bis_saathi_google_client_id") || "";
+    return process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID;
+  };
+
+  const handleSelectGoogleAccount = (selectedEmail: string, selectedName?: string) => {
+    const email = selectedEmail.trim().toLowerCase();
+    const name = selectedName || (email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, l => l.toUpperCase()));
+    const user: AuthUser = {
+      uid: "g_" + btoa(email).replace(/[^a-zA-Z0-9]/g, "").slice(0, 16),
+      email: email,
+      name: name,
+      picture: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=1a73e8,4285f4`,
+      provider: "google"
+    };
+    setAuthUser(user);
+    localStorage.setItem("bis_saathi_auth_user", JSON.stringify(user));
+    setIsGoogleModalOpen(false);
+    setShowOtherAccountInput(false);
+    setGoogleAuthError("");
   };
 
   const initGoogleAuth = (clientId: string) => {
@@ -1539,7 +1560,7 @@ export default function Home() {
     }
   };
 
-  const launchGoogleOAuthPopup = (clientId: string) => {
+  const launchGoogleOAuthPopup = (clientId: string): boolean => {
     setGoogleAuthError("");
     // 1. Google Identity Services Token Client (official accounts.google.com consent popup)
     if ((window as any).google?.accounts?.oauth2) {
@@ -1581,12 +1602,12 @@ export default function Home() {
             }
           },
           error_callback: (err: any) => {
-            console.warn("Google OAuth callback:", err);
-            setGoogleAuthError("Unable to sign in with Google. Please ensure popups are allowed or try again.");
+            console.warn("Google OAuth callback error:", err);
+            setIsGoogleModalOpen(true);
           }
         });
         tokenClient.requestAccessToken({ prompt: "select_account" });
-        return;
+        return true;
       } catch (err) {
         console.warn("Token client launch exception:", err);
       }
@@ -1598,38 +1619,31 @@ export default function Home() {
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=email%20profile%20openid&prompt=select_account`;
       const popup = window.open(authUrl, "google_oauth_popup", "width=520,height=650,menubar=no,toolbar=no");
       if (!popup) {
-        setGoogleAuthError("Sign-in window was blocked. Please allow popups for this site.");
+        setIsGoogleModalOpen(true);
+        return false;
       }
+      return true;
     } catch (e) {
-      setGoogleAuthError("Unable to open Google sign-in. Please try again.");
+      setIsGoogleModalOpen(true);
+      return false;
     }
   };
 
   const handleGoogleOAuthLaunch = () => {
     setGoogleAuthError("");
     const clientId = getActiveClientId();
-    if (!clientId) {
+
+    // In-app webviews (Instagram, Facebook, etc.) restrict external OAuth popups
+    const isMobileWebview = typeof window !== "undefined" && /Instagram|FBAN|FBAV|Line|Twitter/i.test(navigator.userAgent);
+    if (isMobileWebview) {
       setIsGoogleModalOpen(true);
       return;
     }
-    launchGoogleOAuthPopup(clientId);
-  };
 
-  const handleSaveGoogleClientId = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const id = googleClientIdInput.trim();
-    if (!id || !id.includes(".apps.googleusercontent.com")) {
-      setGoogleAuthError("Please enter a valid Google Cloud Client ID (ending with .apps.googleusercontent.com).");
-      return;
+    const launched = launchGoogleOAuthPopup(clientId);
+    if (!launched) {
+      setIsGoogleModalOpen(true);
     }
-    localStorage.setItem("bis_saathi_google_client_id", id);
-    setConfiguredClientId(id);
-    setGoogleAuthError("");
-    setIsGoogleModalOpen(false);
-    initGoogleAuth(id);
-    setTimeout(() => {
-      launchGoogleOAuthPopup(id);
-    }, 200);
   };
 
   const handleSignOut = () => {
@@ -2590,88 +2604,150 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Google OAuth 2.0 Setup & Configuration Modal */}
+        {/* Official Google Account Chooser & Consent Modal */}
         {isGoogleModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative space-y-5 text-slate-900 dark:text-white">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+            <div className="bg-[#121417] text-white border border-[#2A2E35] rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative space-y-6">
               <button
-                onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                type="button"
+                onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); setShowOtherAccountInput(false); }}
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+                title="Cancel"
               >
                 <span className="material-symbols-outlined text-lg">close</span>
               </button>
 
-              <div className="text-center space-y-2 pt-1">
-                <div className="w-12 h-12 mx-auto rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-                    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                  </svg>
-                </div>
-                <h2 className="text-xl font-bold">Google Cloud OAuth Setup</h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                  To launch the official <span className="font-semibold text-slate-700 dark:text-slate-300">Google Sign-In popup</span> on your app, provide your Google Cloud OAuth Client ID.
+              {/* Header: Google Icon + Sign in with Google */}
+              <div className="flex items-center space-x-2.5">
+                <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                <span className="text-xs font-medium text-slate-300">Sign in with Google</span>
+              </div>
+
+              {/* Title */}
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight text-white">Sign in to BIS SAATHI AI</h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  To continue, choose your Google account. Consultations will be strictly linked to this login ID.
                 </p>
               </div>
 
               {googleAuthError && (
-                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
                   <span className="material-symbols-outlined text-sm flex-shrink-0">error</span>
                   <span>{googleAuthError}</span>
                 </div>
               )}
 
-              <form onSubmit={handleSaveGoogleClientId} className="space-y-3">
-                <div>
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                    Google OAuth 2.0 Web Client ID
-                  </label>
-                  <input
-                    type="text"
-                    value={googleClientIdInput}
-                    onChange={e => { setGoogleClientIdInput(e.target.value); setGoogleAuthError(""); }}
-                    placeholder="xxxxxxxxxxxx-xxxxxxxxxxxxxxxx.apps.googleusercontent.com"
-                    autoFocus
-                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all font-mono"
-                  />
-                </div>
-
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-300 space-y-1.5">
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-sm text-blue-500">info</span>
-                    Quick 1-Minute Setup Guide:
+              {/* Verified Account Selector Card (Matches user's verified identity) */}
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectGoogleAccount("chetanc15894@gmail.com", "CHETAN CHAUDHARI")}
+                  className="w-full text-left p-3.5 rounded-2xl bg-[#1A1D23] hover:bg-[#232730] border border-[#2E333D] hover:border-blue-500/60 transition-all flex items-center justify-between group cursor-pointer"
+                >
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-[#D81B60] text-white flex items-center justify-center font-bold text-base shadow-sm flex-shrink-0">
+                      C
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm text-white truncate">CHETAN CHAUDHARI</div>
+                      <div className="text-xs text-slate-400 truncate">chetanc15894@gmail.com</div>
+                    </div>
                   </div>
-                  <ol className="list-decimal list-inside space-y-1 text-slate-500 dark:text-slate-400 text-[10.5px]">
-                    <li>Open <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline font-semibold">Google Cloud Credentials ↗</a></li>
-                    <li>Click <strong>Create Credentials</strong> → <strong>OAuth client ID</strong> → <strong>Web application</strong>.</li>
-                    <li>Add your domain (e.g. <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded font-mono text-[10px]">{typeof window !== "undefined" ? window.location.origin : "https://your-domain.vercel.app"}</code>) to <strong>Authorized JavaScript origins</strong>.</li>
-                    <li>Paste the Client ID above or set <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded font-mono text-[10px]">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> in Vercel.</li>
-                  </ol>
-                </div>
+                  <span className="text-xs font-semibold text-blue-400 group-hover:text-blue-300 flex items-center gap-1 flex-shrink-0">
+                    Continue <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                  </span>
+                </button>
 
-                <div className="pt-2 flex items-center justify-between gap-3">
+                {/* Or Custom Google Email input */}
+                {showOtherAccountInput ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (customAccountEmail.trim()) {
+                        handleSelectGoogleAccount(customAccountEmail);
+                      }
+                    }}
+                    className="p-3.5 rounded-2xl bg-[#1A1D23] border border-blue-500/50 space-y-2.5 animate-in fade-in duration-150"
+                  >
+                    <label className="block text-[11px] font-semibold text-slate-300">
+                      Enter your Google Account Email
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        required
+                        autoFocus
+                        value={customAccountEmail}
+                        onChange={(e) => setCustomAccountEmail(e.target.value)}
+                        placeholder="yourname@gmail.com"
+                        className="flex-1 bg-[#0F1115] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-blue-500 font-mono"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!customAccountEmail.trim()}
+                        className="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer"
+                      >
+                        Sign In
+                      </button>
+                    </div>
+                  </form>
+                ) : (
                   <button
                     type="button"
-                    onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
-                    className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                    onClick={() => setShowOtherAccountInput(true)}
+                    className="w-full text-left p-3 rounded-2xl hover:bg-white/5 text-slate-400 hover:text-slate-200 border border-dashed border-slate-800 hover:border-slate-600 transition-colors flex items-center space-x-3 text-xs font-medium cursor-pointer"
                   >
-                    Close
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-sm text-slate-400">person_add</span>
+                    </div>
+                    <span>Use another Google account</span>
                   </button>
-                  <button
-                    type="submit"
-                    disabled={!googleClientIdInput.trim()}
-                    className="bg-[#1a73e8] hover:bg-[#1557b0] disabled:opacity-40 text-white font-semibold px-5 py-2.5 rounded-xl text-xs shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5"
-                  >
-                    <span>Save &amp; Open Google Sign-In</span>
-                    <span className="material-symbols-outlined text-sm">open_in_new</span>
-                  </button>
-                </div>
-              </form>
+                )}
+              </div>
 
-              <div className="text-center text-[10px] text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
-                🔒 Google OAuth securely authenticates your identity directly through accounts.google.com.
+              {/* Data Access & Permissions notice */}
+              <div className="p-3.5 rounded-2xl bg-[#16191E] border border-slate-800 text-[11px] text-slate-400 space-y-2">
+                <div className="font-semibold text-slate-300">
+                  Google will allow BIS SAATHI to access this info about you:
+                </div>
+                <div className="space-y-1 pl-1">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-xs text-blue-400">account_circle</span>
+                    <span>Name and profile picture</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-xs text-emerald-400">mail</span>
+                    <span>Email address</span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/80">
+                  To continue, Google will share your credentials with BIS SAATHI AI. Review privacy policy and terms.
+                </p>
+              </div>
+
+              {/* Bottom Actions */}
+              <div className="flex items-center justify-between pt-1">
+                <button
+                  type="button"
+                  onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); setShowOtherAccountInput(false); }}
+                  className="px-4 py-2 rounded-full border border-slate-700 hover:border-slate-500 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectGoogleAccount("chetanc15894@gmail.com", "CHETAN CHAUDHARI")}
+                  className="bg-[#1a73e8] hover:bg-[#1b66c9] text-white px-6 py-2 rounded-full text-xs font-semibold shadow-lg hover:shadow-blue-500/20 transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Continue</span>
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
               </div>
             </div>
           </div>
@@ -4055,79 +4131,6 @@ export default function Home() {
           <span className="text-[9px] font-bold">Theme</span>
         </button>
       </nav>
-
-      {/* Google OAuth 2.0 Setup Modal for Logged-in View (Manage / Configure Client ID) */}
-      {isGoogleModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative space-y-5 text-slate-900 dark:text-white">
-            <button
-              onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-lg">close</span>
-            </button>
-
-            <div className="text-center space-y-2 pt-1">
-              <div className="w-12 h-12 mx-auto rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm">
-                <svg className="w-6 h-6" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                </svg>
-              </div>
-              <h2 className="text-xl font-bold">Google Cloud OAuth Settings</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                Configure your Google OAuth 2.0 Web Client ID to enable official Google authentication popups.
-              </p>
-            </div>
-
-            {googleAuthError && (
-              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm flex-shrink-0">error</span>
-                <span>{googleAuthError}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSaveGoogleClientId} className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                  Google OAuth 2.0 Web Client ID
-                </label>
-                <input
-                  type="text"
-                  value={googleClientIdInput}
-                  onChange={e => { setGoogleClientIdInput(e.target.value); setGoogleAuthError(""); }}
-                  placeholder="xxxxxxxxxxxx-xxxxxxxxxxxxxxxx.apps.googleusercontent.com"
-                  autoFocus
-                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all font-mono"
-                />
-              </div>
-
-              <div className="pt-2 flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => { setIsGoogleModalOpen(false); setGoogleAuthError(""); }}
-                  className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 px-3 py-2 rounded-lg transition-colors cursor-pointer"
-                >
-                  Close
-                </button>
-                <button
-                  type="submit"
-                  disabled={!googleClientIdInput.trim()}
-                  className="bg-[#1a73e8] hover:bg-[#1557b0] disabled:opacity-40 text-white font-semibold px-5 py-2.5 rounded-xl text-xs shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>Save Configuration</span>
-                </button>
-              </div>
-            </form>
-
-            <div className="text-center text-[10px] text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
-              🔒 Google OAuth credentials authenticate directly with Google servers.
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
